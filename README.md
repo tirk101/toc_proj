@@ -20,3 +20,18 @@ Make sure you have [Node.js](https://nodejs.org/) and [npm](https://www.npmjs.co
 
    ```bash
    https://github.com/pathfinder-toc/pathfinder-frontend.git
+2. Navigate to the project directory:
+
+   ```bash
+   cd pathfinder-frontend
+3. Install dependencies using npm:
+
+   ```bash
+   npm install
+
+##Development Server
+
+To start the development server, run:
+
+ ```bash
+   npm run dev
