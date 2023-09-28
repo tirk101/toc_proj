@@ -29,7 +29,7 @@ Make sure you have [Node.js](https://nodejs.org/) and [npm](https://www.npmjs.co
    ```bash
    npm install
 
-##Development Server
+## Development Server
 
 To start the development server, run:
 
