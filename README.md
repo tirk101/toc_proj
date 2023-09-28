@@ -1,4 +1,4 @@
-# React Vite Tailwind Starter
+# PathFinder Robt simulation using React + Tailwinds
 
 This is a minimal starter template for building React applications with Vite and using Tailwind CSS for styling.
 
