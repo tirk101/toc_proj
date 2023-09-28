@@ -19,7 +19,7 @@ Make sure you have [Node.js](https://nodejs.org/) and [npm](https://www.npmjs.co
 1. Clone this repository or use it as a template:
 
    ```bash
-   https://github.com/pathfinder-toc/pathfinder-frontend.git
+   git clone -b dev https://github.com/pathfinder-toc/pathfinder-frontend.git
 2. Navigate to the project directory:
 
    ```bash
