@@ -64,7 +64,7 @@ Commit your staged changes with a meaningful commit message. A good commit messa
    4.  Push to GitHub
 Commit your staged changes with a meaningful commit message. A good commit message is concise and describes the purpose of the changes:
   ```bash
-   git push origin main
+   git push origin dev
    ```
 	   
 
