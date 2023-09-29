@@ -1,13 +1,35 @@
-import React from 'react'
+import React, { ReactElement } from 'react'
+
+import {background, boardLeft,boardRight,board,restartButton,tutorialButton,startButton} from '../../assets/home'
+
 
 const index = () => {
   return (
-    <div className=' flex flex-col justify-center items-center font-bold'>
-       <h1>
-            Playground page
-       </h1>
-    </div>
+      <div  style={{ backgroundImage: `url(${background})` }} className='w-full h-[100vh] flex justify-center items-center gap-[5rem] overflow-hidden' >
+          
+          <div className=' relative'>
+            <div className='absolute border-[1px] border-back w-full h-full'>
+            </div>
+            <img src={boardLeft} className='w-[20rem] pointer-events-auto ' draggable={false}/>
+          </div>
+          <div className=' relative'>
+            <div className='absolute border-[1px] border-back w-full h-full '>
+                <div className='flex justify-center items-end h-full'>
+                  <div className='flex justify-center items-center'> 
+                    <img src={tutorialButton} className='w-[8rem] pointer-events-auto hover:translate-y-[-3px] duration-100 active:opacity-70 active:hover:translate-y-[3px]' draggable={false} />
+                    <img src={startButton} className='w-[12rem] pointer-events-auto hover:translate-y-[-3px] duration-100   active:opacity-70 active:hover:translate-y-[3px]' draggable={false}/>
+                    <img src={restartButton} className='w-[8rem] pointer-events-auto hover:translate-y-[-3px] duration-100 active:opacity-70 active:hover:translate-y-[3px] ' draggable={false}/>
+                  </div>
+                </div>
+            </div>
+            <img src={board} className='w-[65rem] pointer-events-auto' draggable={false}/>
+          </div>
+          <div className=' relative'>
+            <div className='absolute border-[1px] border-back w-full h-full'>
+            </div>
+            <img src={boardRight} className='w-[20rem] pointer-events-auto ' draggable={false}/>
+          </div>
+      </div>
   )
 }
-
 export default index
