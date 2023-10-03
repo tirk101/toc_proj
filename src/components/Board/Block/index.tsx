@@ -4,12 +4,17 @@ import {useDroppable} from '@dnd-kit/core';
 const Droppable = (props) => {
   const {isOver, setNodeRef} = useDroppable({
     id: props.id,
+    data:
+    {
+      tileId: props.tileId,
+      tileType: props.tileType,
+    }
   });
   const style = {
     color: isOver ? 'green' : undefined,
     backgroundColor: (props.id.charCodeAt(0) % 2 === 0)
-      ? (props.index % 2 === 0) ? 'rgb(0, 0, 0,0.3)' : 'rgb(255, 255, 255,0.3)'
-      : (props.index % 2 !== 0) ? 'rgb(255, 255, 255,0.3)' : 'rgb(0, 0, 0,0.3)'
+      ? (props.index % 2 === 0) ? 'rgb(0, 0, 0,0.2.5)' : 'rgb(0, 0, 0,0.2)'
+      : (props.index % 2 !== 0) ? 'rgb(0, 0, 0,0.2)' : 'rgb(0, 0, 0,0.25)'
   };
 
 

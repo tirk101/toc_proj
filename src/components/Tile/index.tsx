@@ -1,7 +1,10 @@
 import React from 'react';
 import {useDraggable} from '@dnd-kit/core';
 
+import { character,deadEnd,straight,leftCorner,oneWay,rightCorner,tWay } from '../../assets/playground';
+
 const Tile =(props) =>{
+  const imgData = [{id:'character',src:character},{id:'deadend',src:deadEnd},{id:'straight',src:straight},{id:'leftCorner',src:leftCorner},{id:'oneway',src:oneWay},{id:'rightCorner',src:rightCorner},{id:'tway',src:tWay}]
   const {attributes, listeners, setNodeRef, transform} = useDraggable({
     id: props.id,
     data:
@@ -17,8 +20,8 @@ const Tile =(props) =>{
 
   
   return (
-    <button ref={setNodeRef} style={style} {...listeners} {...attributes} className='w-[4.5rem] border-[1px] border-black  h-[4.5rem] bg-slate-500'>
-      {props.children}{props.id}
+    <button ref={setNodeRef} style={style} {...listeners} {...attributes} className='w-[4.5rem]    h-[4.5rem] '>
+      <img src={imgData.find((item)=>item.id === props.type).src} alt={props.type} className='w-full h-full'/>
     </button>
   );
 }
