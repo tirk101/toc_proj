@@ -4,6 +4,7 @@ import { BrowserRouter as Router, Route, Routes, BrowserRouter, Link} from 'reac
 import Home from './page/Home/index'
 import Tutorial from './page/Tutorial/index'
 import Playground from './page/Playground/index'
+import EndGame from './page/EndGame/index'
 
 const route = () => {
   return (
@@ -13,12 +14,14 @@ const route = () => {
           <Link className='bg-red-500 p-1 rounded-md' to="/" >Home</Link>
           <Link className='bg-red-500 p-1 rounded-md' to="/tutorial" >Tutorial</Link>
           <Link className='bg-red-500 p-1 rounded-md' to="/playground">Playground</Link>
+          <Link className='bg-red-500 p-1 rounded-md' to="/endgame">EndGame</Link>
         </div>
       </div>
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/tutorial" element={<Tutorial />} />
         <Route path="/playground" element={<Playground />} />
+        <Route path="/endgame" element={<EndGame />} />
       </Routes>
     </BrowserRouter>
   )
