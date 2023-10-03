@@ -31,13 +31,13 @@ function Home() {
           <div className='ml-[4.6rem] text-5xl text-[#461E19]'>HOW</div>
         </div>
       </div>
-      <div className='absolute z-10 top-[22rem] right-[30rem]'>
+      <div className='absolute z-10 top-[23rem] right-[27.5rem]'>
         <img src={sprite} />
       </div>
-      <div className='absolute z-10 top-[46rem] right-[56rem]'>
+      <div className='absolute z-10 top-[48rem] right-[53rem]'>
         <img src={chicken1} />
       </div>
-      <div className='absolute z-10 top-[44rem] left-[33rem]'>
+      <div className='absolute z-10 top-[46rem] left-[36rem]'>
         <img src={chicken2} />
       </div>
     </div>
