@@ -7,6 +7,11 @@ import startButton from './start_button.png'
 import tutorialButton from './tutorial_button.png'
 import tileHolder from './tile_holder.png'
 import island from './island.png'
+import button from './button.png'
+import buttonM from './buttonM.png'
+import sprite from './sprite.png'
+import chicken1 from './chicken1.png'
+import chicken2 from './chicken2.png'
 
 export {
     background,
@@ -17,5 +22,10 @@ export {
     startButton,
     restartButton,
     tileHolder,
-    island
+    island,
+    button,
+    buttonM,
+    sprite,
+    chicken1,
+    chicken2
   };
