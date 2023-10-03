@@ -11,7 +11,6 @@ export const Board =({dataObject,boardData}) =>{
   }
 
   return (
-    <><button onClick={test}>test</button>
     <div className=' relative'>
       <div className='absolute  w-full h-full '>
           <div className='flex justify-between items-center h-full flex-col '>
@@ -32,9 +31,7 @@ export const Board =({dataObject,boardData}) =>{
           </div>
       </div>
       <img src={board} className='w-[65rem] pointer-events-auto' draggable={false}/>
-      
       </div>
-    </>
 );
 };
 export default Board
