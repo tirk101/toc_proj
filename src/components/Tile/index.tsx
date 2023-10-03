@@ -21,7 +21,7 @@ const Tile =(props) =>{
   
   return (
     <button ref={setNodeRef} style={style} {...listeners} {...attributes} className='w-[4.5rem]    h-[4.5rem] '>
-      <img src={imgData.find((item)=>item.id === props.type).src} alt={props.type} className='w-full h-full'/>
+      <img src={imgData.find((item)=>item.id === props.type)?.src} alt={props.type} className='w-full h-full'/>
     </button>
   );
 }

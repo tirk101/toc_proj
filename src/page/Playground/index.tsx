@@ -119,7 +119,8 @@ const handleDragEnd = (event) => {
     else
     {
         const [activeArray, setActiveArray] = typesMap[active.data.current.type];
-        if(activeArray.length === 1) return;
+        const currentData = activeArray.find((item) => item.id === active.id);
+        if(currentData.boardId === 'null') return;
         const newData = activeArray.filter((item) => item.id !== active.id);
         setActiveArray([...newData]);
     }
