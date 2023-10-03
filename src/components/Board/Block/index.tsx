@@ -12,9 +12,9 @@ const Droppable = (props) => {
   });
   const style = {
     color: isOver ? 'green' : undefined,
-    backgroundColor: (props.id.charCodeAt(0) % 2 === 0)
+    backgroundColor: props.tileId === 'null' ? ((props.id.charCodeAt(0) % 2 === 0)
       ? (props.index % 2 === 0) ? 'rgb(0, 0, 0,0.25)' : 'rgb(0, 0, 0,0.2)'
-      : (props.index % 2 !== 0) ? 'rgb(0, 0, 0,0.2)' : 'rgb(0, 0, 0,0.25)'
+      : (props.index % 2 !== 0) ? 'rgb(0, 0, 0,0.2)' : 'rgb(0, 0, 0,0.25)'): 'rgb(0,0,0,0)'
   };
 
 
