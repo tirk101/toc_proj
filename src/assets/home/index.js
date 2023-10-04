@@ -12,6 +12,8 @@ import buttonM from './buttonM.png'
 import sprite from './sprite.png'
 import chicken1 from './chicken1.png'
 import chicken2 from './chicken2.png'
+import treeBerry from './tree_berry.png'
+import tree from './tree.png'
 
 export {
     background,
@@ -27,5 +29,7 @@ export {
     buttonM,
     sprite,
     chicken1,
-    chicken2
+    chicken2,
+    treeBerry,
+    tree
   };
