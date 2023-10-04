@@ -20,6 +20,9 @@ const Tile =(props) =>{
     transform: `translate3d(${transform.x}px, ${transform.y}px, 0)`,
   } : undefined; 
 
+  useEffect(() => {
+    props.setFocusTile(isDragging)
+  }, [isDragging])
 
   const direction = [{ id: 'up', rotate: 'rotate-0',},{ id: 'right', rotate: 'rotate-90',},{ id: 'down', rotate: 'rotate-180',},{ id: 'left', rotate: 'rotate-[-90deg]',},]
 

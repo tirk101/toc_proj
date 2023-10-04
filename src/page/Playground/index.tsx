@@ -116,7 +116,7 @@ const index = () => {
     };
   }, [focusTile]);
 
-  const handleRotateTile = (active) => {
+const handleRotateTile = (active) => {
     const tileTypeMap = {
       straight: { state: straight, setState: setStraight },
       leftCorner: { state: leftCorner, setState: setLeftCorner },
@@ -206,7 +206,7 @@ const handleIncreaseTile = (active) => {
 
 const handleDragStart = (event) => {
   const { active } = event;
-  setFocusTile(true);
+  //setFocusTile(true);
   setSelectedTile(active);
 }
 
@@ -215,16 +215,18 @@ const handleDragStart = (event) => {
   return (
     <DndContext onDragEnd={handleDragEnd} onDragStart={handleDragStart}  >
       <div style={{ backgroundImage: `url(${background})` }} className='w-full h-[100vh] flex justify-center items-center gap-[5rem] overflow-hidden animate-moving-background' >
-          <Tileholder dataObject={dataObject} />
-          <Board dataObject={dataArray} boardData={boardData}/>
+          <Tileholder dataObject={dataObject} setFocusTile={setFocusTile} />
+          <Board dataObject={dataArray} boardData={boardData} setFocusTile={setFocusTile}/>
           <Sizechanger/>
           <div className=' absolute flex bottom-1 w-[30rem] justify-center items-center'>
             <img src={tutorialButton} className='w-[8rem] pointer-events-auto hover:translate-y-[-3px] duration-100 active:opacity-70 active:hover:translate-y-[3px]  [clip-path:circle(40%_at_50%_50%)]' draggable={false} />
             <img src={startButton} className='w-[12rem] pointer-events-auto hover:translate-y-[-3px] duration-100   active:opacity-70 active:hover:translate-y-[3px] [clip-path:circle(38%_at_50%_50%)]' draggable={false}/>
             <img src={restartButton} className='w-[8rem] pointer-events-auto hover:translate-y-[-3px] duration-100 active:opacity-70 active:hover:translate-y-[3px] [clip-path:circle(40%_at_50%_50%)]' draggable={false} />
           </div>
-
-      </div>
+          <h1 className={`absolute top-10 text-[4rem] duration-200 transform transition-opacity ${focusTile ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-0'}`}>
+            Press Q or E to rotate
+          </h1>
+      </div>  
       </DndContext>
 
   )

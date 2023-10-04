@@ -4,7 +4,7 @@ import { tileHolder } from '../../assets/home';
 import Tile from '../Tile/index';
 
 
-const Tileholder = ({dataObject}) => {
+const Tileholder = ({dataObject ,setFocusTile}) => {
 
     
 
@@ -15,7 +15,7 @@ const Tileholder = ({dataObject}) => {
                     <div className='relative'>
                         <div className=' absolute w-full h-full flex justify-center pt-2'>
                             {dataObject.straight.map((item) => ((item.boardId === 'null')?
-                                <Tile id={item.id} key={item.id} content={item.content} type={"straight"}  boardId={item.boardId}/> : null
+                                <Tile id={item.id} key={item.id} content={item.content} type={"straight"}  boardId={item.boardId} setFocusTile={setFocusTile}/> : null
                             ))}
                         </div>
                         <img src={tileHolder} className='w-[6rem] h-[6rem]' draggable={false}/>
@@ -24,7 +24,7 @@ const Tileholder = ({dataObject}) => {
                     <div className='relative'>
                         <div className=' absolute w-full h-full flex justify-center pt-2'>
                             {dataObject.leftCorner.map((item) => ((item.boardId === 'null')?
-                                <Tile id={item.id} key={item.id} content={item.content} type={"leftCorner"}  boardId={item.boardId}/>: null
+                                <Tile id={item.id} key={item.id} content={item.content} type={"leftCorner"}  boardId={item.boardId} setFocusTile={setFocusTile}/>: null
                             ))}
                         </div>
                         <img src={tileHolder} className='w-[6rem] h-[6rem]' draggable={false}/>
@@ -33,7 +33,7 @@ const Tileholder = ({dataObject}) => {
                     <div className='relative'>
                         <div className=' absolute w-full h-full flex justify-center pt-2'>
                             {dataObject.rightCorner.map((item) => ((item.boardId === 'null')?
-                                <Tile id={item.id} key={item.id} content={item.content} type={"rightCorner"}  boardId={item.boardId}/>: null
+                                <Tile id={item.id} key={item.id} content={item.content} type={"rightCorner"}  boardId={item.boardId} setFocusTile={setFocusTile}/>: null
                             ))}
                         </div>
                         <img src={tileHolder} className='w-[6rem] h-[6rem]' draggable={false}/>
@@ -44,7 +44,7 @@ const Tileholder = ({dataObject}) => {
                     <div className='relative'>
                         <div className=' absolute w-full h-full flex justify-center pt-2'>
                             {dataObject.oneway.map((item) => ((item.boardId === 'null')?
-                                <Tile id={item.id} key={item.id} content={item.content} type={"oneway"}  boardId={item.boardId}/>:null
+                                <Tile id={item.id} key={item.id} content={item.content} type={"oneway"}  boardId={item.boardId} setFocusTile={setFocusTile}/>:null
                             ))}
                         </div>
                         <img src={tileHolder} className='w-[6rem] h-[6rem]' draggable={false}/>
@@ -53,7 +53,7 @@ const Tileholder = ({dataObject}) => {
                     <div className='relative  '>
                         <div className=' absolute w-full h-full flex justify-center pt-2'>
                             {dataObject.tway.map((item) => ((item.boardId === 'null')?
-                                <Tile id={item.id} key={item.id} content={item.content} type={"tway"}  boardId={item.boardId}/>:null
+                                <Tile id={item.id} key={item.id} content={item.content} type={"tway"}  boardId={item.boardId} setFocusTile={setFocusTile}/>:null
                             ))}
                         </div>
                         <img src={tileHolder} className='w-[6rem] h-[6rem]' draggable={false}/>
@@ -62,7 +62,7 @@ const Tileholder = ({dataObject}) => {
                     <div className='relative'>
                         <div className=' absolute w-full h-full flex justify-center pt-2'>
                             {dataObject.deadend.map((item) => ((item.boardId === 'null')?
-                                <Tile id={item.id} key={item.id} content={item.content} type={"deadend"}  boardId={item.boardId}/>:null
+                                <Tile id={item.id} key={item.id} content={item.content} type={"deadend"}  boardId={item.boardId} setFocusTile={setFocusTile}/>:null
                             ))}
                         </div>
                         <img src={tileHolder} className='w-[6rem] h-[6rem]' draggable={false}/>

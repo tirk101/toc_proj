@@ -4,7 +4,7 @@ import Droppable from './Block/index';
 import {board} from '../../assets/home';
 import Tile from '../Tile/index';
 
-export const Board =({dataObject,boardData}) =>{
+export const Board =({dataObject,boardData,setFocusTile}) =>{
   const test =() =>
   {
     console.log(dataObject[0]);
@@ -21,7 +21,7 @@ export const Board =({dataObject,boardData}) =>{
                   <Droppable id={boardItem.id} index={index} tileId={boardItem.tileId} tileType={boardItem.tileType}>
                     {dataObject.map((item) => (
                       item.map((iitem)=> ((iitem.boardId === boardItem.id)? 
-                      <Tile id={iitem.id} key={iitem.id} content={iitem.content} type={iitem.tileType}  boardId={iitem.boardId}/> : null
+                      <Tile id={iitem.id} key={iitem.id} content={iitem.content} type={iitem.tileType}  boardId={iitem.boardId} setFocusTile={setFocusTile}/> : null
                     ))))}
                   </Droppable>
                 ))}
