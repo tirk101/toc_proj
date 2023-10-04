@@ -1,17 +1,15 @@
 import React, { useState , useEffect } from 'react'
 
-import {background, boardLeft,boardRight,board,restartButton,tutorialButton,startButton} from '../../assets/home'
+import {background,restartButton,tutorialButton,startButton} from '../../assets/home'
 
 import {DndContext} from '@dnd-kit/core';
 
 import Board  from '../../components/Board/index'
 import Tileholder from '../../components/Tileholder';
 import Sizechanger from '../../components/Sizechanger';
-import Tile from '../../components/Tile';
 
-import {StraightTile,LeftCorner,RightCorner,Deadend,Tway,Oneway} from '../../components/types'
+import {StraightTile,LeftCorner,RightCorner,Deadend,Tway,Oneway ,Player} from '../../components/types'
 import defaultBoard9x9 from '../../components/Board/defaultBoard';
-import { set } from 'mongoose';
 
 const defaultStraight: StraightTile[] = [
   {
@@ -68,6 +66,15 @@ const defaultOneway: Oneway[] = [
 
 ]
 
+const defaultPlayer: Player[] = [
+  {
+    id: 'p1',
+    boardId: 'null',
+    content: "up",
+    tileType: 'player',
+  }
+]
+
 
 const index = () => {
   //Data Section
@@ -77,8 +84,9 @@ const index = () => {
   const [deadend, setDeadend] = useState<Deadend[]>(defaultDeadend);
   const [tway, setTway] = useState<Tway[]>(defaultTway);
   const [oneway, setOneway] = useState<Oneway[]>(defaultOneway);
+  const [player, setPlayer] = useState<Player[]>(defaultPlayer);
   const [boardData, setBoardData] = useState(defaultBoard9x9);
-  const dataObject = {straight: straight, leftCorner: leftCorner, rightCorner: rightCorner, deadend: deadend, tway: tway, oneway: oneway}  
+  const dataObject = {straight: straight, leftCorner: leftCorner, rightCorner: rightCorner, deadend: deadend, tway: tway, oneway: oneway,player: player}  
   const dataArray = [straight, leftCorner, rightCorner, deadend, tway,  oneway]
 
 
@@ -95,13 +103,11 @@ const index = () => {
         if(event.key === 'e')
         {
           //Rotate Right
-          console.log(selectedTile)
           handleRotateTile(selectedTile)
         }
         else if (event.key === 'q')
         {
           //Rotate Left
-          console.log(selectedTile)
           handleRotateTile(selectedTile)
         }
       }
@@ -124,6 +130,7 @@ const handleRotateTile = (active) => {
       deadend: { state: deadend, setState: setDeadend },
       tway: { state: tway, setState: setTway },
       oneway: { state: oneway, setState: setOneway },
+      player: { state: player, setState: setPlayer },
     };
     const { type } = active.data.current;
     const { state, setState } = tileTypeMap[type];
@@ -131,7 +138,7 @@ const handleRotateTile = (active) => {
     // set item content to next direction
     const directionMap = { up: 'right', right: 'down', down: 'left', left: 'up' };
     item.content = directionMap[item.content];
-    console.log(item.content)
+    
     setState([...state]);
   }
 
@@ -144,6 +151,7 @@ const handleDragEnd = (event) => {
       deadend: [deadend, setDeadend],
       tway: [tway, setTway],
       oneway: [oneway, setOneway],
+      player: { state: player, setState: setPlayer },
     };
       const currentTileData = boardData.find((item) => item.id === over?.id);
       const previousTileData = boardData.find((item) => item.id === active.data.current.boardId);
@@ -189,6 +197,7 @@ const handleIncreaseTile = (active) => {
     deadend: { state: deadend, setState: setDeadend },
     tway: { state: tway, setState: setTway },
     oneway: { state: oneway, setState: setOneway },
+    player: { state: player, setState: setPlayer },
   };
   const { type } = active.data.current;
   const { state, setState } = tileTypeMap[type];
@@ -216,7 +225,7 @@ const handleDragStart = (event) => {
     <DndContext onDragEnd={handleDragEnd} onDragStart={handleDragStart}  >
       <div style={{ backgroundImage: `url(${background})` }} className='w-full h-[100vh] flex justify-center items-center gap-[5rem] overflow-hidden animate-moving-background' >
           <Tileholder dataObject={dataObject} setFocusTile={setFocusTile} />
-          <Board dataObject={dataArray} boardData={boardData} setFocusTile={setFocusTile}/>
+          <Board dataObject={dataArray} boardData={boardData} setFocusTile={setFocusTile} player={player}/>
           <Sizechanger/>
           <div className=' absolute flex bottom-1 w-[30rem] justify-center items-center'>
             <img src={tutorialButton} className='w-[8rem] pointer-events-auto hover:translate-y-[-3px] duration-100 active:opacity-70 active:hover:translate-y-[3px]  [clip-path:circle(40%_at_50%_50%)]' draggable={false} />

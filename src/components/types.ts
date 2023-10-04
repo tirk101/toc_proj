@@ -48,3 +48,10 @@ boardId: string;
 content: string;
 tileType: string;
 };
+
+export type Player = {
+id: string;
+boardId: string;
+content: string;
+tileType: string;
+};

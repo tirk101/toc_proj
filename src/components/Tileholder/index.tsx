@@ -1,7 +1,7 @@
 import React from 'react'
 import { boardLeft } from '../../assets/home'
 import { tileHolder } from '../../assets/home';
-import Tile from '../Tile/index';
+import Tile from '../Tile/Path/index';
 
 
 const Tileholder = ({dataObject ,setFocusTile}) => {
