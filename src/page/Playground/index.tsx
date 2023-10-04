@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState , useEffect } from 'react'
 
 import {background, boardLeft,boardRight,board,restartButton,tutorialButton,startButton} from '../../assets/home'
 
@@ -11,12 +11,13 @@ import Tile from '../../components/Tile';
 
 import {StraightTile,LeftCorner,RightCorner,Deadend,Tway,Oneway} from '../../components/types'
 import defaultBoard9x9 from '../../components/Board/defaultBoard';
+import { set } from 'mongoose';
 
 const defaultStraight: StraightTile[] = [
   {
       id: 's1',
       boardId: 'null',
-      content: "พ่อง;",
+      content: "up",
       tileType: 'straight'
   }, 
 ]
@@ -25,7 +26,7 @@ const defaultLeftCorner: LeftCorner[] = [
   {
       id: 'l1',
       boardId: 'null',
-      content: "พ่อง;",
+      content: "up",
       tileType: 'leftCorner',
   }, 
 ]
@@ -34,7 +35,7 @@ const defaultRightCorder: RightCorner[] = [
   {
       id: 'r1',
       boardId: 'null',
-      content: "พ่อง;",
+      content: "up",
       tileType: 'rightCorner',
   }, 
 ]
@@ -43,7 +44,7 @@ const defaultDeadend: Deadend[] = [
   {
       id: 'd1',
       boardId: 'null',
-      content: "พ่อง;",
+      content: "up",
       tileType: 'deadend',
   }, 
 ]
@@ -52,7 +53,7 @@ const defaultTway: Tway[] = [
   {
       id: 't1',
       boardId: 'null',
-      content: "พ่อง;",
+      content: "up",
       tileType: 'tway',
   }, 
 ]
@@ -61,7 +62,7 @@ const defaultOneway: Oneway[] = [
   {
       id: 'o1',
       boardId: 'null',
-      content: "พ่อง;",
+      content: "up",
       tileType: 'oneway',
   }, 
 
@@ -78,10 +79,61 @@ const index = () => {
   const [oneway, setOneway] = useState<Oneway[]>(defaultOneway);
   const [boardData, setBoardData] = useState(defaultBoard9x9);
   const dataObject = {straight: straight, leftCorner: leftCorner, rightCorner: rightCorner, deadend: deadend, tway: tway, oneway: oneway}  
-
   const dataArray = [straight, leftCorner, rightCorner, deadend, tway,  oneway]
 
-  
+
+  //StateMangement Section
+  const [focusTile,setFocusTile] = useState(false)
+  const [selectedTile,setSelectedTile] = useState(null)
+
+
+
+  //Function Section
+  useEffect(() => {
+    const handleKeyPress = (event) => {
+      if (focusTile) {
+        if(event.key === 'e')
+        {
+          //Rotate Right
+          console.log(selectedTile)
+          handleRotateTile(selectedTile)
+        }
+        else if (event.key === 'q')
+        {
+          //Rotate Left
+          console.log(selectedTile)
+          handleRotateTile(selectedTile)
+        }
+      }
+    };
+    if (focusTile) {
+      window.addEventListener('keydown', handleKeyPress);
+    } else {
+      window.removeEventListener('keydown', handleKeyPress);
+    }
+    return () => {
+      window.removeEventListener('keydown', handleKeyPress);
+    };
+  }, [focusTile]);
+
+  const handleRotateTile = (active) => {
+    const tileTypeMap = {
+      straight: { state: straight, setState: setStraight },
+      leftCorner: { state: leftCorner, setState: setLeftCorner },
+      rightCorner: { state: rightCorner, setState: setRightCorner },
+      deadend: { state: deadend, setState: setDeadend },
+      tway: { state: tway, setState: setTway },
+      oneway: { state: oneway, setState: setOneway },
+    };
+    const { type } = active.data.current;
+    const { state, setState } = tileTypeMap[type];
+    const item = state.find((item) => item.id === active.id);
+    // set item content to next direction
+    const directionMap = { up: 'right', right: 'down', down: 'left', left: 'up' };
+    item.content = directionMap[item.content];
+    console.log(item.content)
+    setState([...state]);
+  }
 
 const handleDragEnd = (event) => {
     const { over, active } = event;
@@ -124,9 +176,8 @@ const handleDragEnd = (event) => {
         const newData = activeArray.filter((item) => item.id !== active.id);
         setActiveArray([...newData]);
     }
+    setFocusTile(false);
   };
-
-
 
 
 const handleIncreaseTile = (active) => {
@@ -146,24 +197,23 @@ const handleIncreaseTile = (active) => {
   const newTile = {
     id: `${type.charAt(0)}${matches + 1}`,
     boardId: 'null',
-    content: "พ่อง",
+    content: "up",
     tileType: type
   };
   setState([...state, newTile]);
+  
 }
 
-const handleReset=()=>{
-  setStraight(defaultStraight);
-  setLeftCorner(defaultLeftCorner);
-  setRightCorner(defaultRightCorder);
-  setDeadend(defaultDeadend);
-  setTway(defaultTway);
-  setOneway(defaultOneway);
-  setBoardData(defaultBoard9x9);
+const handleDragStart = (event) => {
+  const { active } = event;
+  setFocusTile(true);
+  setSelectedTile(active);
 }
+
+
 
   return (
-    <DndContext onDragEnd={handleDragEnd} >
+    <DndContext onDragEnd={handleDragEnd} onDragStart={handleDragStart}  >
       <div style={{ backgroundImage: `url(${background})` }} className='w-full h-[100vh] flex justify-center items-center gap-[5rem] overflow-hidden animate-moving-background' >
           <Tileholder dataObject={dataObject} />
           <Board dataObject={dataArray} boardData={boardData}/>
