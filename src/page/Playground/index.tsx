@@ -12,7 +12,6 @@ import {StraightTile,LeftCorner,RightCorner,Deadend,Tway,Oneway ,Player,Finishli
 import defaultBoard9x9 from '../../utils/defaultBoard';
 import defaultBoard6x6 from '../../utils/6x6Board';
 import { defaultBoard12x12 } from '../../utils/12x12Board';
-import { set } from 'mongoose';
 
 const defaultStraight: StraightTile[] = [
   {
@@ -158,8 +157,6 @@ const index = () => {
     handleReset();
   }, []);
 
-  // wait 15 sec before render
-
 
 const handleRotateTile = (active) => {
     const tileTypeMap = {
@@ -301,7 +298,6 @@ const handleDragStart = (event) => {
   setSelectedTile(active);
 }
 
-//Function that reset all data to default
 const handleReset = () => {
   setStraight(defaultStraight);
   setLeftCorner(defaultLeftCorner);
