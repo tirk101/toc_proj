@@ -1,4 +1,4 @@
-import { Board } from '../types';
+import { Board } from './types';
 function generateDefaultBoard(rows: number, columns: number): Board[] {
     const board: Board[] = [];
   

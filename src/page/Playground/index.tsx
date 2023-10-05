@@ -8,10 +8,10 @@ import Board  from '../../components/Board/index'
 import Tileholder from '../../components/Tileholder';
 import Sizechanger from '../../components/Sizechanger';
 
-import {StraightTile,LeftCorner,RightCorner,Deadend,Tway,Oneway ,Player,Finishline , Defaulttile} from '../../components/types'
-import defaultBoard9x9 from '../../components/Board/defaultBoard';
-import defaultBoard6x6 from '../../components/Board/6x6Board';
-import { defaultBoard12x12 } from '../../components/Board/12x12Board';
+import {StraightTile,LeftCorner,RightCorner,Deadend,Tway,Oneway ,Player,Finishline , Defaulttile} from '../../utils/types'
+import defaultBoard9x9 from '../../utils/defaultBoard';
+import defaultBoard6x6 from '../../utils/6x6Board';
+import { defaultBoard12x12 } from '../../utils/12x12Board';
 import { set } from 'mongoose';
 
 const defaultStraight: StraightTile[] = [

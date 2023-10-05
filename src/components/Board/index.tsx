@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import {DndContext} from '@dnd-kit/core';
-import Droppable from './Block/index';
+import Droppable from '../Block/index';
 import {board,tileHolder} from '../../assets/home';
 import Tile from '../Tile/Path/index';
 import Playertile from '../Tile/Player';

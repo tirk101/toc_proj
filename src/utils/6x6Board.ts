@@ -1,4 +1,4 @@
-import { Board } from '../types';
+import { Board } from './types';
 const defaultBoard6x6: Board[] = [
     {
       id: 'a1',
