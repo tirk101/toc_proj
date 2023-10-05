@@ -55,3 +55,10 @@ boardId: string;
 content: string;
 tileType: string;
 };
+
+export type Finishline = {
+id: string;
+boardId: string;
+content: string;
+tileType: string;
+};

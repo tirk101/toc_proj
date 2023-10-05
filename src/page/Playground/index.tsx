@@ -8,7 +8,7 @@ import Board  from '../../components/Board/index'
 import Tileholder from '../../components/Tileholder';
 import Sizechanger from '../../components/Sizechanger';
 
-import {StraightTile,LeftCorner,RightCorner,Deadend,Tway,Oneway ,Player} from '../../components/types'
+import {StraightTile,LeftCorner,RightCorner,Deadend,Tway,Oneway ,Player,Finishline} from '../../components/types'
 import defaultBoard9x9 from '../../components/Board/defaultBoard';
 
 const defaultStraight: StraightTile[] = [
@@ -76,6 +76,15 @@ const defaultPlayer: Player[] = [
 ]
 
 
+const defaultFinishline: Finishline[] = [
+  {
+    id: 'f1',
+    boardId: 'null',
+    content: "up",
+    tileType: 'finishline',
+  }
+]
+
 const index = () => {
   //Data Section
   const [straight, setStraight] = useState<StraightTile[]>(defaultStraight);
@@ -85,6 +94,7 @@ const index = () => {
   const [tway, setTway] = useState<Tway[]>(defaultTway);
   const [oneway, setOneway] = useState<Oneway[]>(defaultOneway);
   const [player, setPlayer] = useState<Player[]>(defaultPlayer);
+  const [finishline,setFinishline] = useState<Finishline[]>(defaultFinishline);
   const [boardData, setBoardData] = useState(defaultBoard9x9);
   const dataObject = {straight: straight, leftCorner: leftCorner, rightCorner: rightCorner, deadend: deadend, tway: tway, oneway: oneway,player: player}  
   const dataArray = [straight, leftCorner, rightCorner, deadend, tway,  oneway]
@@ -151,44 +161,73 @@ const handleDragEnd = (event) => {
       deadend: [deadend, setDeadend],
       tway: [tway, setTway],
       oneway: [oneway, setOneway],
-      player: { state: player, setState: setPlayer },
+      player: [player, setPlayer ],
+      finishline: [finishline, setFinishline]
     };
+    
       const currentTileData = boardData.find((item) => item.id === over?.id);
       const previousTileData = boardData.find((item) => item.id === active.data.current.boardId);
-      if(currentTileData)
+      if(currentTileData && (active.data.current.type !== 'player' && active.data.current.type !== 'finishline'))
       {
         currentTileData.tileId = active.id;
         currentTileData.tileType = active.data.current.type;
       }
-      if(previousTileData)
+      if(previousTileData &&  (active.data.current.type !== 'player' && active.data.current.type !== 'finishline'))
       {
         previousTileData.tileId = 'null';
         previousTileData.tileType = 'null';
       }
+      
     if(over)
     {
-      if(over.data.current.tileId === 'null')
+      if (active.data.current.type === 'player' || active.data.current.type === 'finishline')
+      {
+        if(over.data.current.tileId === 'null')
+        {
+          return; 
+        }
+        else
+        {
+          const [activeArray, setActiveArray] = typesMap[active.data.current.type];
+          const activeIndex = activeArray.findIndex((item) => item.id === active.id);
+          activeArray[activeIndex].boardId = over?.id || 'null';
+          handleIncreaseTile(active);
+        }
+      }
+      else if (over.data.current.tileId === 'null')
       {
         const [activeArray, setActiveArray] = typesMap[active.data.current.type];
         const activeIndex = activeArray.findIndex((item) => item.id === active.id);
         activeArray[activeIndex].boardId = over?.id || 'null';
-        setActiveArray([...activeArray]);
         handleIncreaseTile(active);
       }
+      
     }
     else
     {
         const [activeArray, setActiveArray] = typesMap[active.data.current.type];
         const currentData = activeArray.find((item) => item.id === active.id);
-        if(currentData.boardId === 'null') return;
         const newData = activeArray.filter((item) => item.id !== active.id);
-        setActiveArray([...newData]);
+
+        if(currentData.boardId === 'null') return;
+        if(active.data.current.type === 'player' || active.data.current.type === 'finishline'){
+          currentData.boardId = 'null';
+          setActiveArray([...newData, currentData]);
+          return;
+        }
+        else
+        {
+          setActiveArray([...newData]);
+        }
+        
     }
+    
     setFocusTile(false);
   };
 
 
 const handleIncreaseTile = (active) => {
+  if (active.data.current.type === 'player' || active.data.current.tpye === 'finishline') return;
   if (active.data.current.boardId !== 'null') return;
   const tileTypeMap = {
     straight: { state: straight, setState: setStraight },
@@ -198,6 +237,7 @@ const handleIncreaseTile = (active) => {
     tway: { state: tway, setState: setTway },
     oneway: { state: oneway, setState: setOneway },
     player: { state: player, setState: setPlayer },
+    finishline: { state: finishline, setState: setFinishline }
   };
   const { type } = active.data.current;
   const { state, setState } = tileTypeMap[type];
@@ -215,7 +255,6 @@ const handleIncreaseTile = (active) => {
 
 const handleDragStart = (event) => {
   const { active } = event;
-  //setFocusTile(true);
   setSelectedTile(active);
 }
 
@@ -225,7 +264,7 @@ const handleDragStart = (event) => {
     <DndContext onDragEnd={handleDragEnd} onDragStart={handleDragStart}  >
       <div style={{ backgroundImage: `url(${background})` }} className='w-full h-[100vh] flex justify-center items-center gap-[5rem] overflow-hidden animate-moving-background' >
           <Tileholder dataObject={dataObject} setFocusTile={setFocusTile} />
-          <Board dataObject={dataArray} boardData={boardData} setFocusTile={setFocusTile} player={player}/>
+          <Board dataObject={dataArray} boardData={boardData} setFocusTile={setFocusTile} player={player} finishline={finishline}/>
           <Sizechanger/>
           <div className=' absolute flex bottom-1 w-[30rem] justify-center items-center'>
             <img src={tutorialButton} className='w-[8rem] pointer-events-auto hover:translate-y-[-3px] duration-100 active:opacity-70 active:hover:translate-y-[3px]  [clip-path:circle(40%_at_50%_50%)]' draggable={false} />

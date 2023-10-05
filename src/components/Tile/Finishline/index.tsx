@@ -1,10 +1,10 @@
 import React , {useEffect} from 'react';
 import {useDraggable} from '@dnd-kit/core';
 
-import { playerFront , playerBack,playerLeft,playerRight   } from '../../../assets/playground';
+import { finishline  } from '../../../assets/playground';
 
 const Playertile =(props) =>{
-  const imgData = [{id:'up',src:playerFront},{id:'down',src:playerBack},{id:'left',src:playerLeft},{id:'right',src:playerRight}]
+  const imgData = [{id:'up',src:finishline},{id:'down',src:finishline},{id:'left',src:finishline},{id:'right',src:finishline}]
   const {attributes, listeners, setNodeRef, transform , isDragging} = useDraggable({
     id: props.id,
     data:
@@ -23,7 +23,7 @@ const Playertile =(props) =>{
   }, [isDragging])
   
   return (
-    <button ref={setNodeRef} style={style} {...listeners} {...attributes} className='w-[4.5rem] h-[4.5rem] z-[20] relative'>
+    <button ref={setNodeRef} style={style} {...listeners} {...attributes} className='w-[4.5rem] h-[4.5rem]'>
       <img src={imgData.find((item)=>item.id === props.content)?.src} alt={props.type} className='w-full h-full'/>
     </button>
   );

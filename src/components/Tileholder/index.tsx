@@ -17,10 +17,10 @@ const Tileholder = ({dataObject ,setFocusTile}) => {
                             {dataObject.straight.map((item) => ((item.boardId === 'null')?
                                 <Tile id={item.id} key={item.id} content={item.content} type={"straight"}  boardId={item.boardId} setFocusTile={setFocusTile}/> : null
                             ))}
+                        
                         </div>
                         <img src={tileHolder} className='w-[6rem] h-[6rem]' draggable={false}/>
                     </div>
-
                     <div className='relative'>
                         <div className=' absolute w-full h-full flex justify-center pt-2'>
                             {dataObject.leftCorner.map((item) => ((item.boardId === 'null')?
@@ -38,9 +38,6 @@ const Tileholder = ({dataObject ,setFocusTile}) => {
                         </div>
                         <img src={tileHolder} className='w-[6rem] h-[6rem]' draggable={false}/>
                     </div>
-
-                    
-
                     <div className='relative'>
                         <div className=' absolute w-full h-full flex justify-center pt-2'>
                             {dataObject.oneway.map((item) => ((item.boardId === 'null')?
