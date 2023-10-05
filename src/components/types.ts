@@ -48,6 +48,12 @@ boardId: string;
 content: string;
 tileType: string;
 };
+export type Defaulttile = {
+id: string;
+boardId: string;
+content: string;
+tileType: string;
+};
 
 export type Player = {
 id: string;

@@ -9,7 +9,7 @@ import EndGame from './page/EndGame/index'
 const route = () => {
   return (
     <BrowserRouter>
-      <div className='absolute'>
+      <div className='absolute z-50'>
         <div className='flex gap-10 '>
           <Link className='bg-red-500 p-1 rounded-md' to="/" >Home</Link>
           <Link className='bg-red-500 p-1 rounded-md' to="/tutorial" >Tutorial</Link>

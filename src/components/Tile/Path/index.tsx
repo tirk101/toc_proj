@@ -1,10 +1,10 @@
 import React , {useEffect} from 'react';
 import {useDraggable} from '@dnd-kit/core';
 
-import { character,deadEnd,straight,leftCorner,oneWay,rightCorner,tWay ,playerFront } from '../../../assets/playground';
+import { character,deadEnd,straight,leftCorner,oneWay,rightCorner,tWay ,playerFront ,defaultTile } from '../../../assets/playground';
 
 const Tile =(props) =>{
-  const imgData = [{id:'character',src:character},{id:'deadend',src:deadEnd},{id:'straight',src:straight},{id:'leftCorner',src:leftCorner},{id:'oneway',src:oneWay},{id:'rightCorner',src:rightCorner},{id:'tway',src:tWay},{id:'player',src:playerFront}]
+  const imgData = [{id:'character',src:character},{id:'deadend',src:deadEnd},{id:'straight',src:straight},{id:'leftCorner',src:leftCorner},{id:'oneway',src:oneWay},{id:'rightCorner',src:rightCorner},{id:'tway',src:tWay},{id:'player',src:playerFront},{id:'defaulttile',src:defaultTile}]
   const {attributes, listeners, setNodeRef, transform , isDragging} = useDraggable({
     id: props.id,
     data:

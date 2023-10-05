@@ -8,8 +8,11 @@ import Board  from '../../components/Board/index'
 import Tileholder from '../../components/Tileholder';
 import Sizechanger from '../../components/Sizechanger';
 
-import {StraightTile,LeftCorner,RightCorner,Deadend,Tway,Oneway ,Player,Finishline} from '../../components/types'
+import {StraightTile,LeftCorner,RightCorner,Deadend,Tway,Oneway ,Player,Finishline , Defaulttile} from '../../components/types'
 import defaultBoard9x9 from '../../components/Board/defaultBoard';
+import defaultBoard6x6 from '../../components/Board/6x6Board';
+import { defaultBoard12x12 } from '../../components/Board/12x12Board';
+import { set } from 'mongoose';
 
 const defaultStraight: StraightTile[] = [
   {
@@ -66,6 +69,22 @@ const defaultOneway: Oneway[] = [
 
 ]
 
+const defaultTile : Defaulttile[] = [
+  {
+    id: 'df1',
+    boardId: 'null',
+    content: "up",
+    tileType: 'defaulttile',
+  },
+  {
+    id: 'df2',
+    boardId: 'null',
+    content: "up",
+    tileType: 'defaulttile',
+  }
+]
+
+
 const defaultPlayer: Player[] = [
   {
     id: 'p1',
@@ -93,16 +112,18 @@ const index = () => {
   const [deadend, setDeadend] = useState<Deadend[]>(defaultDeadend);
   const [tway, setTway] = useState<Tway[]>(defaultTway);
   const [oneway, setOneway] = useState<Oneway[]>(defaultOneway);
+  const [defaulttile, setDefaulttile] = useState<Defaulttile[]>(defaultTile);
   const [player, setPlayer] = useState<Player[]>(defaultPlayer);
   const [finishline,setFinishline] = useState<Finishline[]>(defaultFinishline);
   const [boardData, setBoardData] = useState(defaultBoard9x9);
-  const dataObject = {straight: straight, leftCorner: leftCorner, rightCorner: rightCorner, deadend: deadend, tway: tway, oneway: oneway,player: player}  
+  const dataObject = {straight: straight, leftCorner: leftCorner, rightCorner: rightCorner, deadend: deadend, tway: tway, oneway: oneway,player: player , finishline: finishline, defaulttile: defaulttile}  
   const dataArray = [straight, leftCorner, rightCorner, deadend, tway,  oneway]
 
 
   //StateMangement Section
   const [focusTile,setFocusTile] = useState(false)
   const [selectedTile,setSelectedTile] = useState(null)
+  const [resetting,setResetting] = useState(true)
   const navigate = useNavigate()
 
 
@@ -137,6 +158,8 @@ const index = () => {
     handleReset();
   }, []);
 
+  // wait 15 sec before render
+
 
 const handleRotateTile = (active) => {
     const tileTypeMap = {
@@ -168,17 +191,18 @@ const handleDragEnd = (event) => {
       tway: [tway, setTway],
       oneway: [oneway, setOneway],
       player: [player, setPlayer ],
-      finishline: [finishline, setFinishline]
+      finishline: [finishline, setFinishline],
+      defaulttile: [defaulttile, setDefaulttile]
     };
     
       const currentTileData = boardData.find((item) => item.id === over?.id);
       const previousTileData = boardData.find((item) => item.id === active.data.current.boardId);
-      if(currentTileData && (active.data.current.type !== 'player' && active.data.current.type !== 'finishline'))
+      if(currentTileData)
       {
         currentTileData.tileId = active.id;
         currentTileData.tileType = active.data.current.type;
       }
-      if(previousTileData &&  (active.data.current.type !== 'player' && active.data.current.type !== 'finishline'))
+      if(previousTileData)
       {
         previousTileData.tileId = 'null';
         previousTileData.tileType = 'null';
@@ -186,11 +210,22 @@ const handleDragEnd = (event) => {
       
     if(over)
     {
-      if (active.data.current.type === 'player' || active.data.current.type === 'finishline')
+      if (over.data.current.tileId === 'null')
       {
-        if(over.data.current.tileId === 'null')
+        if(active.data.current.type === 'player' || active.data.current.type === 'finishline')
         {
-          return; 
+          if(active.data.current.type === 'player')
+          {
+            defaulttile[0].boardId = over.id;
+          }
+          else
+          {
+            defaulttile[1].boardId = over.id;
+          }
+          const [activeArray, setActiveArray] = typesMap[active.data.current.type];
+          const activeIndex = activeArray.findIndex((item) => item.id === active.id);
+          activeArray[activeIndex].boardId = over?.id || 'null';
+          handleIncreaseTile(active);
         }
         else
         {
@@ -199,13 +234,7 @@ const handleDragEnd = (event) => {
           activeArray[activeIndex].boardId = over?.id || 'null';
           handleIncreaseTile(active);
         }
-      }
-      else if (over.data.current.tileId === 'null')
-      {
-        const [activeArray, setActiveArray] = typesMap[active.data.current.type];
-        const activeIndex = activeArray.findIndex((item) => item.id === active.id);
-        activeArray[activeIndex].boardId = over?.id || 'null';
-        handleIncreaseTile(active);
+        
       }
       
     }
@@ -217,8 +246,15 @@ const handleDragEnd = (event) => {
 
         if(currentData.boardId === 'null') return;
         if(active.data.current.type === 'player' || active.data.current.type === 'finishline'){
+          if(active.data.current.type === 'player')
+          {
+            defaulttile[0].boardId = 'null';
+          }
+          else
+          {
+            defaulttile[1].boardId = 'null';
+          }
           currentData.boardId = 'null';
-          setActiveArray([...newData, currentData]);
           return;
         }
         else
@@ -243,7 +279,8 @@ const handleIncreaseTile = (active) => {
     tway: { state: tway, setState: setTway },
     oneway: { state: oneway, setState: setOneway },
     player: { state: player, setState: setPlayer },
-    finishline: { state: finishline, setState: setFinishline }
+    finishline: { state: finishline, setState: setFinishline },
+    defaulttile: { state: defaulttile, setState: setDefaulttile }
   };
   const { type } = active.data.current;
   const { state, setState } = tileTypeMap[type];
@@ -275,6 +312,7 @@ const handleReset = () => {
   setPlayer(defaultPlayer);
   setFinishline(defaultFinishline);
   setBoardData(defaultBoard9x9);
+  setDefaulttile(defaultTile);
   dataObject.straight = defaultStraight;
   dataObject.leftCorner = defaultLeftCorner;
   dataObject.rightCorner = defaultRightCorder;
@@ -282,6 +320,9 @@ const handleReset = () => {
   dataObject.tway = defaultTway;
   dataObject.oneway = defaultOneway;
   dataObject.player = defaultPlayer;
+  dataObject.finishline = defaultFinishline;
+  dataObject.defaulttile = defaultTile;
+
   setFocusTile(false);
   setSelectedTile(null);
   dataArray.forEach((item) => {
@@ -294,18 +335,29 @@ const handleReset = () => {
     item.tileType = 'null';
   })
 
+  player[0].boardId = 'null';
+  defaulttile[0].boardId = 'null';
+  defaulttile[1].boardId = 'null';
+  finishline[0].boardId = 'null';
+  setResetting(false);
+ 
 }
 
 
-
-
+  if(resetting)
+  {
+    return (
+      <h1>Loading</h1>
+    )
+  }
 
   return (
     <DndContext onDragEnd={handleDragEnd} onDragStart={handleDragStart}  >
       <div style={{ backgroundImage: `url(${background})` }} className='w-full h-[100vh] flex justify-center items-center gap-[5rem] overflow-hidden animate-moving-background' >
           <Tileholder dataObject={dataObject} setFocusTile={setFocusTile} />
-          <Board dataObject={dataArray} boardData={boardData} setFocusTile={setFocusTile} player={player} finishline={finishline}/>
+          <Board dataObject={dataArray} boardData={boardData} setFocusTile={setFocusTile} player={player} finishline={finishline} defaultTile={defaultTile}/>
           <Sizechanger/>
+          
           <div className=' absolute flex bottom-1 w-[30rem] justify-center items-center'>
             <img src={tutorialButton} className='w-[8rem] pointer-events-auto hover:translate-y-[-3px] duration-100 active:opacity-70 active:hover:translate-y-[3px]  [clip-path:circle(40%_at_50%_50%)]' draggable={false} onClick={()=>{navigate('/tutorial')}}/>
             <img src={startButton} className='w-[12rem] pointer-events-auto hover:translate-y-[-3px] duration-100   active:opacity-70 active:hover:translate-y-[3px] [clip-path:circle(38%_at_50%_50%)]' draggable={false} />

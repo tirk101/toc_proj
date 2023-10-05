@@ -22,7 +22,7 @@ const Droppable = (props) => {
     backgroundColor: !isOver? ((props.id.charCodeAt(0) % 2 === 0)
       ? (props.index % 2 === 0) ? 'rgb(0, 0, 0,0.25)' : 'rgb(0, 0, 0,0.2)'
       : (props.index % 2 !== 0) ? 'rgb(0, 0, 0,0.2)' : 'rgb(0, 0, 0,0.25)'): 
-      type === 'player' || type === 'finishline' ? props.tileId === 'null'? 'rgb(255,0,0)' : 'rgb(50,205,50)': 'rgb(0,200,0)',
+      props.tileId === 'null' ? 'rgb(0,255,0,0.1)' : 'rgb(255,0,0,0.5)',
   };
 
 

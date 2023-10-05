@@ -10,6 +10,7 @@ import playerBack from './player_back.png';
 import playerLeft from './player_left.png';
 import playerRight from './player_right.png';
 import finishline from './finishline.png';
+import defaultTile from './default_tile.png';
 
 export {
   character,
@@ -23,5 +24,6 @@ export {
   playerBack,
   playerLeft,
   playerRight,
-  finishline
+  finishline,
+  defaultTile
   };

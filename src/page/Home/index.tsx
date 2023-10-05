@@ -6,7 +6,7 @@ function Home() {
   const [count, setCount] = useState(0)
 
   return (
-    <div style={{ backgroundImage: `url(${background})` }} className='w-full h-[100vh] flex justify-center items-center gap-[5rem] overflow-hidden animate-moving-background' >
+    <div style={{ backgroundImage: `url(${background})` }} className='w-full h-[100vh] flex justify-center items-center gap-[5rem] overflow-hidden animate-moving-background relative' >
       <div className="absolute z-10 top-[5.5rem] left-[4rem] leading-[10rem] mainTitle" >
         <div className='text-4xl text-[#6A8139] subTitle'>WHEEL</div>
         <div className='text-[12.6rem] text-[#A4C263] tracking-tight'>ROBOT</div>
@@ -31,15 +31,15 @@ function Home() {
         </div>
       </div>
       {/* <div className='relative z-10'> */}
-        <div className='absolute z-10 top-[23rem] right-[27.5rem]'>
-          <img src={sprite} />
-        </div>
-        <div className='absolute z-10 top-[48rem] right-[54.5rem]'>
-          <img src={chicken1} />
-        </div>
-        <div className='absolute z-10 top-[46rem] left-[36rem]'>
-          <img src={chicken2} />
-        </div>
+          <div className='absolute z-10 top-[23rem] right-[27.5rem]'>
+            <img src={sprite} />
+          </div>
+          <div className='absolute z-10 top-[48rem] right-[54.5rem]'>
+            <img src={chicken1} />
+          </div>
+          <div className='absolute z-10 top-[46rem] left-[36rem]'>
+            <img src={chicken2} />
+          </div>
         </div>
   
   )
