@@ -1,5 +1,5 @@
 import React, { useState , useEffect } from 'react'
-
+import { useNavigate} from 'react-router-dom'
 import {background,restartButton,tutorialButton,startButton} from '../../assets/home'
 
 import {DndContext} from '@dnd-kit/core';
@@ -103,6 +103,7 @@ const index = () => {
   //StateMangement Section
   const [focusTile,setFocusTile] = useState(false)
   const [selectedTile,setSelectedTile] = useState(null)
+  const navigate = useNavigate()
 
 
 
@@ -131,6 +132,11 @@ const index = () => {
       window.removeEventListener('keydown', handleKeyPress);
     };
   }, [focusTile]);
+
+  useEffect(() => {
+    handleReset();
+  }, []);
+
 
 const handleRotateTile = (active) => {
     const tileTypeMap = {
@@ -258,6 +264,40 @@ const handleDragStart = (event) => {
   setSelectedTile(active);
 }
 
+//Function that reset all data to default
+const handleReset = () => {
+  setStraight(defaultStraight);
+  setLeftCorner(defaultLeftCorner);
+  setRightCorner(defaultRightCorder);
+  setDeadend(defaultDeadend);
+  setTway(defaultTway);
+  setOneway(defaultOneway);
+  setPlayer(defaultPlayer);
+  setFinishline(defaultFinishline);
+  setBoardData(defaultBoard9x9);
+  dataObject.straight = defaultStraight;
+  dataObject.leftCorner = defaultLeftCorner;
+  dataObject.rightCorner = defaultRightCorder;
+  dataObject.deadend = defaultDeadend;
+  dataObject.tway = defaultTway;
+  dataObject.oneway = defaultOneway;
+  dataObject.player = defaultPlayer;
+  setFocusTile(false);
+  setSelectedTile(null);
+  dataArray.forEach((item) => {
+    item.forEach((item) => {
+      item.boardId = 'null';
+    })
+  })
+  boardData.forEach((item) => {
+    item.tileId = 'null';
+    item.tileType = 'null';
+  })
+
+}
+
+
+
 
 
   return (
@@ -267,9 +307,9 @@ const handleDragStart = (event) => {
           <Board dataObject={dataArray} boardData={boardData} setFocusTile={setFocusTile} player={player} finishline={finishline}/>
           <Sizechanger/>
           <div className=' absolute flex bottom-1 w-[30rem] justify-center items-center'>
-            <img src={tutorialButton} className='w-[8rem] pointer-events-auto hover:translate-y-[-3px] duration-100 active:opacity-70 active:hover:translate-y-[3px]  [clip-path:circle(40%_at_50%_50%)]' draggable={false} />
-            <img src={startButton} className='w-[12rem] pointer-events-auto hover:translate-y-[-3px] duration-100   active:opacity-70 active:hover:translate-y-[3px] [clip-path:circle(38%_at_50%_50%)]' draggable={false}/>
-            <img src={restartButton} className='w-[8rem] pointer-events-auto hover:translate-y-[-3px] duration-100 active:opacity-70 active:hover:translate-y-[3px] [clip-path:circle(40%_at_50%_50%)]' draggable={false} />
+            <img src={tutorialButton} className='w-[8rem] pointer-events-auto hover:translate-y-[-3px] duration-100 active:opacity-70 active:hover:translate-y-[3px]  [clip-path:circle(40%_at_50%_50%)]' draggable={false} onClick={()=>{navigate('/tutorial')}}/>
+            <img src={startButton} className='w-[12rem] pointer-events-auto hover:translate-y-[-3px] duration-100   active:opacity-70 active:hover:translate-y-[3px] [clip-path:circle(38%_at_50%_50%)]' draggable={false} />
+            <img src={restartButton} className='w-[8rem] pointer-events-auto hover:translate-y-[-3px] duration-100 active:opacity-70 active:hover:translate-y-[3px] [clip-path:circle(40%_at_50%_50%)]' draggable={false} onClick={handleReset} />
           </div>
           <h1 className={`absolute top-10 text-[4rem] duration-200 transform transition-opacity ${focusTile ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-0'}`}>
             Press Q or E to rotate
