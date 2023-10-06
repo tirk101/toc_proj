@@ -1,6 +1,6 @@
 import React, { useState , useEffect } from 'react'
 import { useNavigate} from 'react-router-dom'
-import {background,restartButton,tutorialButton,startButton} from '../../assets/home'
+import {background,restartButton,tutorialButton,startButton, board} from '../../assets/home'
 
 import {DndContext} from '@dnd-kit/core';
 
@@ -115,6 +115,8 @@ const index = () => {
   const dataObject = {straight: straight, corner: corner,deadend: deadend, tway: tway, oneway: oneway,player: player , finishline: finishline, defaulttile: defaulttile}  
   const dataArray = [straight, corner, deadend, tway,  oneway]
   const [position, setPosition] = useState({x:0,y:0});
+  const [startingBoard, setStartingBoard] = useState(null)
+  const data = [];
   
 
 
@@ -402,21 +404,168 @@ const handleInput = async (textInput) => {
 };
 
 
-const calculatePath = () => {
-  const data =[]
+const initializeStart = async() => {
+  
   const playerBoard = player[0].boardId;
   const finishlineBoard = finishline[0].boardId;
   const ypos = Array.from(playerBoard)[0].charCodeAt(0) 
   const xpos = Array.from(playerBoard)[1].charCodeAt(0)
-  if (player[0].content === 'up') {
-      const tile = boardData.find((item) => item.id === String.fromCharCode(ypos-1)+String.fromCharCode(xpos))
-      if (tile?.tileType == 'straight')
+  const tileTypeMap = {
+    straight: { state: straight, setState: setStraight },
+    corner: { state: corner, setState: setCorner },
+    deadend: { state: deadend, setState: setDeadend },
+    tway: { state: tway, setState: setTway },
+    oneway: { state: oneway, setState: setOneway },
+    player: { state: player, setState: setPlayer },
+    finishline: { state: finishline, setState: setFinishline },
+    defaulttile: { state: defaulttile, setState: setDefaulttile }
+  };
+  if (player[0].direction === 'up') {
+      const board = boardData.find((item) => item.id === String.fromCharCode(ypos-1)+String.fromCharCode(xpos))
+      const { state } = tileTypeMap[board.tileType];
+      const item = state.find((item) => item.id === board?.tileId);
+      if(item.path.includes('down'))
       {
-        data.push('up');
+        data.push('up')
+        setStartingBoard(board)
+      }
+      else
+      {
+        data.push('nopath');
       }
   }
-  console.log(data)
+  else if (player[0].direction === 'down') {
+    const board = boardData.find((item) => item.id === String.fromCharCode(ypos+1)+String.fromCharCode(xpos))
+    const { state } = tileTypeMap[board.tileType];
+    const item = state.find((item) => item.id === board?.tileId);
+    if(item.path.includes('up'))
+    {
+      data.push('down')
+      setStartingBoard(board)
+    }
+    else
+    {
+      data.push('nopath');
+    }
+
+  }
+  else if (player[0].direction === 'left') {
+    const board = boardData.find((item) => item.id === String.fromCharCode(ypos)+String.fromCharCode(xpos-1))
+    const { state } = tileTypeMap[board.tileType];
+    const item = state.find((item) => item.id === board?.tileId);
+    if(item.path.includes('right'))
+    {
+      data.push('left')
+      setStartingBoard(board)
+    }
+    else
+    {
+      data.push('nopath');
+    }
+  }
+  else if (player[0].direction === 'right') {
+    const board = boardData.find((item) => item.id === String.fromCharCode(ypos)+String.fromCharCode(xpos+1))
+    const { state } = tileTypeMap[board.tileType];
+    const item = state.find((item) => item.id === board?.tileId);
+    if(item.path.includes('left'))
+    {
+      data.push('right')
+      setStartingBoard(board)
+    }
+    else
+    {
+      data.push('nopath');
+    }
+  }
 }
+
+const handleFinish = async () => {
+  await initializeStart();
+  handleInput(data.toString());
+}
+
+const calculatePath = async () => {
+  const tileTypeMap = {
+    straight: { state: straight, setState: setStraight },
+    corner: { state: corner, setState: setCorner },
+    deadend: { state: deadend, setState: setDeadend },
+    tway: { state: tway, setState: setTway },
+    oneway: { state: oneway, setState: setOneway },
+    player: { state: player, setState: setPlayer },
+    finishline: { state: finishline, setState: setFinishline },
+    defaulttile: { state: defaulttile, setState: setDefaulttile }
+  };
+  const tileId = startingBoard.tileId;
+  const tileType = startingBoard.tileType;
+  const { state } = tileTypeMap[tileType];
+  const item = state.find((item) => item.id === tileId);
+  const path = item.path;
+
+
+  if (item.tileType === 'straight') {
+    if (data[data.length-1] === 'up') {
+    }
+    else if (data[data.length-1] === 'down') {
+    }
+    else if (data[data.length-1] === 'left') {
+    }
+    else if (data[data.length-1] === 'right') {
+    }
+  }
+  else if(item.tileType === 'corner')
+  {
+    if (data[data.length-1] === 'up') {
+    }
+    else if (data[data.length-1] === 'down') {
+    }
+    else if (data[data.length-1] === 'left') {
+    }
+    else if (data[data.length-1] === 'right') {
+    }
+  }
+  else if(item.tileType === 'deadend')
+  {
+    if (data[data.length-1] === 'up') {
+    }
+    else if (data[data.length-1] === 'down') {
+    }
+    else if (data[data.length-1] === 'left') {
+    }
+    else if (data[data.length-1] === 'right') {
+    }
+  }
+  else if (item.tileType === 'tway') 
+  {
+    if (data[data.length-1] === 'up') {
+    }
+    else if (data[data.length-1] === 'down') {
+    }
+    else if (data[data.length-1] === 'left') {
+    }
+    else if (data[data.length-1] === 'right') {
+    }
+  }
+  else if (item.tileType === 'oneway')
+  {
+    if(data[data.length-1] === 'up')
+    {
+    }
+    else if(data[data.length-1] === 'down')
+    {
+    }
+    else if(data[data.length-1] === 'left')
+    {
+    }
+    else if(data[data.length-1] === 'right')
+    {
+    }
+  }
+
+}
+
+
+
+
 
 
 
@@ -435,7 +584,7 @@ const calculatePath = () => {
           <Sizechanger/>
           <div className=' absolute flex bottom-1 w-[30rem] justify-center items-center '>
             <img src={tutorialButton} className='w-[8rem] pointer-events-auto hover:translate-y-[-3px] duration-100 active:opacity-70 active:hover:translate-y-[3px]  [clip-path:circle(40%_at_50%_50%)]' draggable={false} onClick={()=>{navigate('/tutorial')}}/>
-            <img src={startButton} className='w-[12rem] pointer-events-auto hover:translate-y-[-3px] duration-100   active:opacity-70 active:hover:translate-y-[3px] [clip-path:circle(38%_at_50%_50%)]' draggable={false} onClick={calculatePath}/>
+            <img src={startButton} className='w-[12rem] pointer-events-auto hover:translate-y-[-3px] duration-100   active:opacity-70 active:hover:translate-y-[3px] [clip-path:circle(38%_at_50%_50%)]' draggable={false} onClick={handleFinish}/>
             <img src={restartButton} className='w-[8rem] pointer-events-auto hover:translate-y-[-3px] duration-100 active:opacity-70 active:hover:translate-y-[3px] [clip-path:circle(40%_at_50%_50%)]' draggable={false} onClick={handleReset} />
           </div>
           <h1 className={`absolute top-10 text-[4rem] duration-200 transform transition-opacity ${focusTile ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-0'}`}>
