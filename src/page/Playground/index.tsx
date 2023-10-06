@@ -124,6 +124,8 @@ const index = () => {
     oneway: { state: oneway, setState: setOneway },
     player: { state: player, setState: setPlayer },
   };
+  const rotationDirection = {straight: {'up':['up','down'],'left':['left','right'],'down':['up','down'],'right':['left','right']},corner: {'up':['up','left'],'left':['left','down'],'down':['down','right'],'right':['right','up']},tway: {'up':['up','left','down'],'left':['left','down','right'],'down':['down','right','up'],'right':['right','up','left']},oneway: {'up':['up'],'left':['left'],'down':['down'],'right':['right']},player: {'up':['up'],'left':['left'],'down':['down'],'right':['right']}}
+
   
 
 
@@ -169,7 +171,6 @@ const index = () => {
 
 const handleRotateTile = (active) => {
     
-    const rotationDirection = {straight: {'up':['up','down'],'left':['left','right'],'down':['up','down'],'right':['left','right']},corner: {'up':['up','left'],'left':['left','down'],'down':['down','right'],'right':['right','up']},tway: {'up':['up','left','down'],'left':['left','down','right'],'down':['down','right','up'],'right':['right','up','left']},oneway: {'up':['up'],'left':['left'],'down':['down'],'right':['right']},player: {'up':['up'],'left':['left'],'down':['down'],'right':['right']}}
     const { type } = active.data.current;
     if(type === 'finishline' || type === 'defaulttile' || type === 'deadend') return;
     const { state, setState } = tileTypeMap[type];
