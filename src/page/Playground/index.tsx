@@ -117,6 +117,13 @@ const index = () => {
   const [position, setPosition] = useState({x:0,y:0});
   const [startingBoard, setStartingBoard] = useState(null)
   const data = [];
+  const tileTypeMap = {
+    straight: { state: straight, setState: setStraight },
+    corner: { state: corner, setState: setCorner },
+    tway: { state: tway, setState: setTway },
+    oneway: { state: oneway, setState: setOneway },
+    player: { state: player, setState: setPlayer },
+  };
   
 
 
@@ -161,13 +168,7 @@ const index = () => {
 
 
 const handleRotateTile = (active) => {
-    const tileTypeMap = {
-      straight: { state: straight, setState: setStraight },
-      corner: { state: corner, setState: setCorner },
-      tway: { state: tway, setState: setTway },
-      oneway: { state: oneway, setState: setOneway },
-      player: { state: player, setState: setPlayer },
-    };
+    
     const rotationDirection = {straight: {'up':['up','down'],'left':['left','right'],'down':['up','down'],'right':['left','right']},corner: {'up':['up','left'],'left':['left','down'],'down':['down','right'],'right':['right','up']},tway: {'up':['up','left','down'],'left':['left','down','right'],'down':['down','right','up'],'right':['right','up','left']},oneway: {'up':['up'],'left':['left'],'down':['down'],'right':['right']},player: {'up':['up'],'left':['left'],'down':['down'],'right':['right']}}
     const { type } = active.data.current;
     if(type === 'finishline' || type === 'defaulttile' || type === 'deadend') return;
@@ -271,17 +272,6 @@ const handleDragEnd = (event) => {
 const handleIncreaseTile = (active) => {
   if (active.data.current.type === 'player' || active.data.current.tpye === 'finishline') return;
   if (active.data.current.boardId !== 'null') return;
-  const tileTypeMap = {
-    straight: { state: straight, setState: setStraight },
-    corner: { state: corner, setState: setCorner },
-    deadend: { state: deadend, setState: setDeadend },
-    tway: { state: tway, setState: setTway },
-    oneway: { state: oneway, setState: setOneway },
-    player: { state: player, setState: setPlayer },
-    finishline: { state: finishline, setState: setFinishline },
-    defaulttile: { state: defaulttile, setState: setDefaulttile }
-  };
-
   const pathArray ={straight: ["up","down"],corner: ["up","left"],deadend: ["none"],tway: ["up","left","down"],oneway: ["up"],player: ["up"],finishline: ["up"],defaulttile: ["up"]}
   const { type } = active.data.current;
   const { state, setState } = tileTypeMap[type];
@@ -410,16 +400,6 @@ const initializeStart = async() => {
   const finishlineBoard = finishline[0].boardId;
   const ypos = Array.from(playerBoard)[0].charCodeAt(0) 
   const xpos = Array.from(playerBoard)[1].charCodeAt(0)
-  const tileTypeMap = {
-    straight: { state: straight, setState: setStraight },
-    corner: { state: corner, setState: setCorner },
-    deadend: { state: deadend, setState: setDeadend },
-    tway: { state: tway, setState: setTway },
-    oneway: { state: oneway, setState: setOneway },
-    player: { state: player, setState: setPlayer },
-    finishline: { state: finishline, setState: setFinishline },
-    defaulttile: { state: defaulttile, setState: setDefaulttile }
-  };
   if (player[0].direction === 'up') {
       const board = boardData.find((item) => item.id === String.fromCharCode(ypos-1)+String.fromCharCode(xpos))
       const { state } = tileTypeMap[board.tileType];
@@ -485,16 +465,6 @@ const handleFinish = async () => {
 }
 
 const calculatePath = async () => {
-  const tileTypeMap = {
-    straight: { state: straight, setState: setStraight },
-    corner: { state: corner, setState: setCorner },
-    deadend: { state: deadend, setState: setDeadend },
-    tway: { state: tway, setState: setTway },
-    oneway: { state: oneway, setState: setOneway },
-    player: { state: player, setState: setPlayer },
-    finishline: { state: finishline, setState: setFinishline },
-    defaulttile: { state: defaulttile, setState: setDefaulttile }
-  };
   const tileId = startingBoard.tileId;
   const tileType = startingBoard.tileType;
   const { state } = tileTypeMap[tileType];
