@@ -21,12 +21,12 @@ export const Board =({dataObject,boardData,setFocusTile,player, finishline, defa
                       <div className='relative'>
                       {dataObject.map((item) => (
                         item.map((iitem)=> ((iitem.boardId === boardItem.id)? 
-                        <Tile id={iitem.id} key={iitem.id} content={iitem.content} type={iitem.tileType}  boardId={iitem.boardId} setFocusTile={setFocusTile}/> : null
+                        <Tile id={iitem.id} key={iitem.id} direction={iitem.direction} path={iitem.path} type={iitem.tileType}  boardId={iitem.boardId} setFocusTile={setFocusTile}/> : null
                       ))))}
                       {defaultTile.map((item) => ((item.boardId === boardItem.id)? <Tile id={item.id} key={item.id} content={item.content} type={item.tileType}  boardId={item.boardId} setFocusTile={setFocusTile}/> : null))}
                       <div className='absolute top-0'>
-                        {player.map((item) => ((item.boardId === boardItem.id)? <Playertile id={item.id} key={item.id} content={item.content} type={"player"}  boardId={item.boardId} setFocusTile={setFocusTile} position={position}/> : null))}
-                        {boardItem.id === finishline[0].boardId  ? <Finishline id={'f1'} key={'f1'} content={finishline[0].content} type={"finishline"}  boardId={finishline[0].boardId} setFocusTile={setFocusTile}/> : null}
+                        {player.map((item) => ((item.boardId === boardItem.id)? <Playertile id={item.id} key={item.id} direction={item.direction} type={"player"}  boardId={item.boardId} setFocusTile={setFocusTile} position={position}/> : null))}
+                        {finishline.map((item) => ((item.boardId === boardItem.id)? <Finishline id={item.id} key={item.id} content={item.content} type={"finishline"}  boardId={item.boardId} setFocusTile={setFocusTile}/> : null))}
                       </div>
                       </div>
                     </Droppable>
@@ -37,7 +37,7 @@ export const Board =({dataObject,boardData,setFocusTile,player, finishline, defa
             <div className='flex justify-between mx-32 mb-10'> 
               <div className='relative'>
                 <div className='absolute left-[0.7rem]'>
-                  {player.map((item) => ((item.boardId === 'null')?<Playertile id={item.id} key={item.id} content={item.content} type={"player"}  boardId={item.boardId} setFocusTile={setFocusTile} position={position} />: null ))}
+                  {player.map((item) => ((item.boardId === 'null')?<Playertile id={item.id} key={item.id} direction={item.direction} type={"player"}  boardId={item.boardId} setFocusTile={setFocusTile} position={position} />: null ))}
                 </div>
                 <img src={tileHolder} className='w-[6rem] draggable={false} '/>
               </div>

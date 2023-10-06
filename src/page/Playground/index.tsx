@@ -8,44 +8,39 @@ import Board  from '../../components/Board/index'
 import Tileholder from '../../components/Tileholder';
 import Sizechanger from '../../components/Sizechanger';
 
-import {StraightTile,LeftCorner,RightCorner,Deadend,Tway,Oneway ,Player,Finishline , Defaulttile} from '../../utils/types'
+import {StraightTile,Corner,Deadend,Tway,Oneway ,Player,Finishline , Defaulttile} from '../../utils/types'
 import defaultBoard9x9 from '../../utils/defaultBoard';
 import defaultBoard6x6 from '../../utils/6x6Board';
 import { defaultBoard12x12 } from '../../utils/12x12Board';
-import { set } from 'mongoose';
 
 const defaultStraight: StraightTile[] = [
   {
       id: 's1',
       boardId: 'null',
-      content: "up",
+      direction: "up",
+      path: ["up","down"],
       tileType: 'straight'
   }, 
 ]
 
-const defaultLeftCorner: LeftCorner[] = [
+const defaultCorner: Corner[] = [
   {
       id: 'l1',
       boardId: 'null',
-      content: "up",
-      tileType: 'leftCorner',
+      direction: "up",
+      path: ["up","left"],
+      tileType: 'corner',
   }, 
 ]
 
-const defaultRightCorder: RightCorner[] = [
-  {
-      id: 'r1',
-      boardId: 'null',
-      content: "up",
-      tileType: 'rightCorner',
-  }, 
-]
+
 
 const defaultDeadend: Deadend[] = [
   {
       id: 'd1',
       boardId: 'null',
-      content: "up",
+      direction: "up",
+      path: ["none"],
       tileType: 'deadend',
   }, 
 ]
@@ -54,7 +49,8 @@ const defaultTway: Tway[] = [
   {
       id: 't1',
       boardId: 'null',
-      content: "up",
+      direction: "up",
+      path: ["up","left","down"],
       tileType: 'tway',
   }, 
 ]
@@ -63,7 +59,8 @@ const defaultOneway: Oneway[] = [
   {
       id: 'o1',
       boardId: 'null',
-      content: "up",
+      direction: "up",
+      path: ["up"],
       tileType: 'oneway',
   }, 
 
@@ -89,7 +86,7 @@ const defaultPlayer: Player[] = [
   {
     id: 'p1',
     boardId: 'null',
-    content: "up",
+    direction: "up",
     tileType: 'player',
   }
 ]
@@ -107,8 +104,7 @@ const defaultFinishline: Finishline[] = [
 const index = () => {
   //Data Section
   const [straight, setStraight] = useState<StraightTile[]>(defaultStraight);
-  const [leftCorner, setLeftCorner] = useState<LeftCorner[]>(defaultLeftCorner);
-  const [rightCorner, setRightCorner] = useState<RightCorner[]>(defaultRightCorder);
+  const [corner, setCorner] = useState<Corner[]>(defaultCorner);
   const [deadend, setDeadend] = useState<Deadend[]>(defaultDeadend);
   const [tway, setTway] = useState<Tway[]>(defaultTway);
   const [oneway, setOneway] = useState<Oneway[]>(defaultOneway);
@@ -116,8 +112,8 @@ const index = () => {
   const [player, setPlayer] = useState<Player[]>(defaultPlayer);
   const [finishline,setFinishline] = useState<Finishline[]>(defaultFinishline);
   const [boardData, setBoardData] = useState(defaultBoard9x9);
-  const dataObject = {straight: straight, leftCorner: leftCorner, rightCorner: rightCorner, deadend: deadend, tway: tway, oneway: oneway,player: player , finishline: finishline, defaulttile: defaulttile}  
-  const dataArray = [straight, leftCorner, rightCorner, deadend, tway,  oneway]
+  const dataObject = {straight: straight, corner: corner,deadend: deadend, tway: tway, oneway: oneway,player: player , finishline: finishline, defaulttile: defaulttile}  
+  const dataArray = [straight, corner, deadend, tway,  oneway]
   const [position, setPosition] = useState({x:0,y:0});
   
 
@@ -165,19 +161,19 @@ const index = () => {
 const handleRotateTile = (active) => {
     const tileTypeMap = {
       straight: { state: straight, setState: setStraight },
-      leftCorner: { state: leftCorner, setState: setLeftCorner },
-      rightCorner: { state: rightCorner, setState: setRightCorner },
-      deadend: { state: deadend, setState: setDeadend },
+      corner: { state: corner, setState: setCorner },
       tway: { state: tway, setState: setTway },
       oneway: { state: oneway, setState: setOneway },
       player: { state: player, setState: setPlayer },
     };
+    const rotationDirection = {straight: {'up':['up','down'],'left':['left','right'],'down':['up','down'],'right':['left','right']},corner: {'up':['up','left'],'left':['left','down'],'down':['down','right'],'right':['right','up']},tway: {'up':['up','left','down'],'left':['left','down','right'],'down':['down','right','up'],'right':['right','up','left']},oneway: {'up':['up'],'left':['left'],'down':['down'],'right':['right']},player: {'up':['up'],'left':['left'],'down':['down'],'right':['right']}}
     const { type } = active.data.current;
+    if(type === 'finishline' || type === 'defaulttile' || type === 'deadend') return;
     const { state, setState } = tileTypeMap[type];
     const item = state.find((item) => item.id === active.id);
-    // set item content to next direction
     const directionMap = { up: 'right', right: 'down', down: 'left', left: 'up' };
-    item.content = directionMap[item.content];
+    item.direction = directionMap[item.direction];
+    item.path = rotationDirection[type][item.direction];
     
     setState([...state]);
   }
@@ -186,8 +182,7 @@ const handleDragEnd = (event) => {
     const { over, active } = event;
     const typesMap = {
       straight: [straight, setStraight],
-      leftCorner: [leftCorner, setLeftCorner],
-      rightCorner: [rightCorner, setRightCorner],
+      corner: [corner, setCorner],
       deadend: [deadend, setDeadend],
       tway: [tway, setTway],
       oneway: [oneway, setOneway],
@@ -233,6 +228,8 @@ const handleDragEnd = (event) => {
           const [activeArray, setActiveArray] = typesMap[active.data.current.type];
           const activeIndex = activeArray.findIndex((item) => item.id === active.id);
           activeArray[activeIndex].boardId = over?.id || 'null';
+          console.log('test')
+          console.log(activeArray[activeIndex])
           handleIncreaseTile(active);
         }
         
@@ -274,8 +271,7 @@ const handleIncreaseTile = (active) => {
   if (active.data.current.boardId !== 'null') return;
   const tileTypeMap = {
     straight: { state: straight, setState: setStraight },
-    leftCorner: { state: leftCorner, setState: setLeftCorner },
-    rightCorner: { state: rightCorner, setState: setRightCorner },
+    corner: { state: corner, setState: setCorner },
     deadend: { state: deadend, setState: setDeadend },
     tway: { state: tway, setState: setTway },
     oneway: { state: oneway, setState: setOneway },
@@ -283,6 +279,8 @@ const handleIncreaseTile = (active) => {
     finishline: { state: finishline, setState: setFinishline },
     defaulttile: { state: defaulttile, setState: setDefaulttile }
   };
+
+  const pathArray ={straight: ["up","down"],corner: ["up","left"],deadend: ["none"],tway: ["up","left","down"],oneway: ["up"],player: ["up"],finishline: ["up"],defaulttile: ["up"]}
   const { type } = active.data.current;
   const { state, setState } = tileTypeMap[type];
   const id = (state[state.length-1].id)
@@ -290,7 +288,8 @@ const handleIncreaseTile = (active) => {
   const newTile = {
     id: `${type.charAt(0)}${matches + 1}`,
     boardId: 'null',
-    content: "up",
+    direction: "up",
+    path: pathArray[type],
     tileType: type
   };
   setState([...state, newTile]);
@@ -299,13 +298,13 @@ const handleIncreaseTile = (active) => {
 
 const handleDragStart = (event) => {
   const { active } = event;
+  console.log(active)
   setSelectedTile(active);
 }
 
 const handleReset = () => {
   setStraight(defaultStraight);
-  setLeftCorner(defaultLeftCorner);
-  setRightCorner(defaultRightCorder);
+  setCorner(defaultCorner);
   setDeadend(defaultDeadend);
   setTway(defaultTway);
   setOneway(defaultOneway);
@@ -314,8 +313,7 @@ const handleReset = () => {
   setBoardData(defaultBoard9x9);
   setDefaulttile(defaultTile);
   dataObject.straight = defaultStraight;
-  dataObject.leftCorner = defaultLeftCorner;
-  dataObject.rightCorner = defaultRightCorder;
+  dataObject.corner = defaultCorner;
   dataObject.deadend = defaultDeadend;
   dataObject.tway = defaultTway;
   dataObject.oneway = defaultOneway;
@@ -342,9 +340,6 @@ const handleReset = () => {
   setResetting(false);
  
 }
-
-
-//how to translate board when click on the button 
 
 const handleMove = async(input) =>
 {
@@ -397,7 +392,7 @@ const handleMove = async(input) =>
 const handleInput = async (textInput) => {
   const input = textInput.split(',');
   for (const item of input) {
-    await new Promise((resolve) => {
+    await new Promise<void>((resolve) => {
       setTimeout(async () => {
         await handleMove(item);
         resolve();
@@ -405,6 +400,23 @@ const handleInput = async (textInput) => {
     });
   }
 };
+
+
+const calculatePath = () => {
+  const data =[]
+  const playerBoard = player[0].boardId;
+  const finishlineBoard = finishline[0].boardId;
+  const ypos = Array.from(playerBoard)[0].charCodeAt(0) 
+  const xpos = Array.from(playerBoard)[1].charCodeAt(0)
+  if (player[0].content === 'up') {
+      const tile = boardData.find((item) => item.id === String.fromCharCode(ypos-1)+String.fromCharCode(xpos))
+      if (tile?.tileType == 'straight')
+      {
+        data.push('up');
+      }
+  }
+  console.log(data)
+}
 
 
 
@@ -423,7 +435,7 @@ const handleInput = async (textInput) => {
           <Sizechanger/>
           <div className=' absolute flex bottom-1 w-[30rem] justify-center items-center '>
             <img src={tutorialButton} className='w-[8rem] pointer-events-auto hover:translate-y-[-3px] duration-100 active:opacity-70 active:hover:translate-y-[3px]  [clip-path:circle(40%_at_50%_50%)]' draggable={false} onClick={()=>{navigate('/tutorial')}}/>
-            <img src={startButton} className='w-[12rem] pointer-events-auto hover:translate-y-[-3px] duration-100   active:opacity-70 active:hover:translate-y-[3px] [clip-path:circle(38%_at_50%_50%)]' draggable={false} onClick={()=>{handleInput('left,up,down,right,left')}}/>
+            <img src={startButton} className='w-[12rem] pointer-events-auto hover:translate-y-[-3px] duration-100   active:opacity-70 active:hover:translate-y-[3px] [clip-path:circle(38%_at_50%_50%)]' draggable={false} onClick={calculatePath}/>
             <img src={restartButton} className='w-[8rem] pointer-events-auto hover:translate-y-[-3px] duration-100 active:opacity-70 active:hover:translate-y-[3px] [clip-path:circle(40%_at_50%_50%)]' draggable={false} onClick={handleReset} />
           </div>
           <h1 className={`absolute top-10 text-[4rem] duration-200 transform transition-opacity ${focusTile ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-0'}`}>

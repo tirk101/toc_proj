@@ -9,7 +9,7 @@ const Playertile =(props) =>{
     id: props.id,
     data:
     {
-      content: props.content,
+      direction: props.direction,
       boardId: props.boardId,
       type: props.type,
     }
@@ -24,7 +24,7 @@ const Playertile =(props) =>{
   
   return (
     <button ref={setNodeRef} style={style} {...listeners} {...attributes} className={`w-[4.5rem] h-[4.5rem] z-[20] relative ${!isDragging ? 'transition-transform transform translate-y-[-10px]' : ''}`}>
-      <img src={imgData.find((item)=>item.id === props.content)?.src} alt={props.type} className='w-full h-full'/>
+      <img src={imgData.find((item)=>item.id === props.direction)?.src} alt={props.type} className='w-full h-full'/>
     </button>
   );
 }
