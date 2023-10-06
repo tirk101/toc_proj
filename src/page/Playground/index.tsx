@@ -12,6 +12,7 @@ import {StraightTile,LeftCorner,RightCorner,Deadend,Tway,Oneway ,Player,Finishli
 import defaultBoard9x9 from '../../utils/defaultBoard';
 import defaultBoard6x6 from '../../utils/6x6Board';
 import { defaultBoard12x12 } from '../../utils/12x12Board';
+import { set } from 'mongoose';
 
 const defaultStraight: StraightTile[] = [
   {
@@ -117,6 +118,8 @@ const index = () => {
   const [boardData, setBoardData] = useState(defaultBoard9x9);
   const dataObject = {straight: straight, leftCorner: leftCorner, rightCorner: rightCorner, deadend: deadend, tway: tway, oneway: oneway,player: player , finishline: finishline, defaulttile: defaulttile}  
   const dataArray = [straight, leftCorner, rightCorner, deadend, tway,  oneway]
+  const [position, setPosition] = useState({x:0,y:0});
+  
 
 
   //StateMangement Section
@@ -124,6 +127,7 @@ const index = () => {
   const [selectedTile,setSelectedTile] = useState(null)
   const [resetting,setResetting] = useState(true)
   const navigate = useNavigate()
+
 
 
 
@@ -340,6 +344,70 @@ const handleReset = () => {
 }
 
 
+//how to translate board when click on the button 
+
+const handleMove = async(input) =>
+{
+  const playerBoard = player[0].boardId;
+  if(playerBoard === 'null') return;
+  const ypos = Array.from(playerBoard)[0].charCodeAt(0) 
+  const xpos = Array.from(playerBoard)[1].charCodeAt(0)
+  console.log(ypos,xpos)
+  if(input === 'up')
+  {
+    setPosition({x:position.x,y:position.y-4.5})
+    player[0].content = 'up'
+    setTimeout(() => {
+      player[0].boardId = (String.fromCharCode(ypos-1)+String.fromCharCode(xpos))
+      setPosition({x:0,y:0})
+      
+    }, 250);
+    
+  }
+  else if(input === 'down')
+  {
+    setPosition({x:position.x,y:position.y+4.5})
+    player[0].content = 'down'
+    setTimeout(() => {
+      player[0].boardId = (String.fromCharCode(ypos+1)+String.fromCharCode(xpos))
+      setPosition({x:0,y:0})
+    }, 250);
+  }
+  else if(input === 'left')
+  {
+    setPosition({x:position.x-4.5,y:position.y})
+    player[0].content = 'left'
+    setTimeout(() => {
+      player[0].boardId = (String.fromCharCode(ypos)+String.fromCharCode(xpos-1))
+      setPosition({x:0,y:0})
+    }, 250);
+  }
+  else if(input === 'right')
+  {
+    setPosition({x:position.x+4.5,y:position.y})
+    player[0].content = 'right'
+    setTimeout(() => {
+      player[0].boardId = (String.fromCharCode(ypos)+String.fromCharCode(xpos+1))
+      setPosition({x:0,y:0})
+    }, 250);
+  }
+
+}
+
+const handleInput = async (textInput) => {
+  const input = textInput.split(',');
+  for (const item of input) {
+    await new Promise((resolve) => {
+      setTimeout(async () => {
+        await handleMove(item);
+        resolve();
+      }, 500);
+    });
+  }
+};
+
+
+
   if(resetting)
   {
     return (
@@ -351,18 +419,18 @@ const handleReset = () => {
     <DndContext onDragEnd={handleDragEnd} onDragStart={handleDragStart}  >
       <div style={{ backgroundImage: `url(${background})` }} className='w-full h-[100vh] flex justify-center items-center gap-[5rem] overflow-hidden animate-moving-background' >
           <Tileholder dataObject={dataObject} setFocusTile={setFocusTile} />
-          <Board dataObject={dataArray} boardData={boardData} setFocusTile={setFocusTile} player={player} finishline={finishline} defaultTile={defaultTile}/>
+          <Board dataObject={dataArray} boardData={boardData} setFocusTile={setFocusTile} player={player} finishline={finishline} defaultTile={defaultTile} position={position}/>
           <Sizechanger/>
-          
-          <div className=' absolute flex bottom-1 w-[30rem] justify-center items-center'>
+          <div className=' absolute flex bottom-1 w-[30rem] justify-center items-center '>
             <img src={tutorialButton} className='w-[8rem] pointer-events-auto hover:translate-y-[-3px] duration-100 active:opacity-70 active:hover:translate-y-[3px]  [clip-path:circle(40%_at_50%_50%)]' draggable={false} onClick={()=>{navigate('/tutorial')}}/>
-            <img src={startButton} className='w-[12rem] pointer-events-auto hover:translate-y-[-3px] duration-100   active:opacity-70 active:hover:translate-y-[3px] [clip-path:circle(38%_at_50%_50%)]' draggable={false} />
+            <img src={startButton} className='w-[12rem] pointer-events-auto hover:translate-y-[-3px] duration-100   active:opacity-70 active:hover:translate-y-[3px] [clip-path:circle(38%_at_50%_50%)]' draggable={false} onClick={()=>{handleInput('left,up,down,right,left')}}/>
             <img src={restartButton} className='w-[8rem] pointer-events-auto hover:translate-y-[-3px] duration-100 active:opacity-70 active:hover:translate-y-[3px] [clip-path:circle(40%_at_50%_50%)]' draggable={false} onClick={handleReset} />
           </div>
           <h1 className={`absolute top-10 text-[4rem] duration-200 transform transition-opacity ${focusTile ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-0'}`}>
             Press Q or E to rotate
           </h1>
       </div>  
+      
       </DndContext>
 
   )
