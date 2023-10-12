@@ -8,7 +8,7 @@ const index = () => {
             style={{ backgroundImage: `url(${background})` }}
             className='w-full h-[100vh] flex justify-center items-center gap-[5rem] overflow-hidden animate-moving-background'
         >
-            <div className='absolute font-outline-4 text-center z-10 top-0 leading-[100px] md:leading-[160px] lg:leading-[180px] text-[#A4C263] text-[90px] lg:text-[180px] md:text-[150px] font-medium mt-[160px] md:mt-[170px] lg:mt-[140px]'>
+            <div className='absolute font-outline-4 text-center z-10 top-0 leading-[100px] md:leading-[160px] lg:leading-[180px] text-[#A4C263] text-[90px] lg:text-[180px] md:text-[150px] font-medium mt-[160px] md:mt-[170px] lg:mt-[100px]'>
                 TRY<br />AGAIN
             </div>
             <div className='absolute z-10 w-full mt-[150px] md:mt-[100px] lg:mt-[220px]'>
