@@ -26,7 +26,7 @@ function Home() {
                 <img src={chicken1} />
               </div>
             </div>
-            <img src={island} className=' w-screen pr-[100px] z-10' />
+            <img src={island} className=' pr-[100px] z-10' />
         </div>
         <div className='absolute z-10 top-[40rem] left-[5.5rem] select-none'>
           <div className=' hover:scale-110 ml-1 cursor-pointer'>
