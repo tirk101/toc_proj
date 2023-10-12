@@ -18,30 +18,31 @@ function Home() {
         <img src={island} className='w-screen pr-[100px] ' />
       </div>
       <div className='absolute z-10 top-[40rem] left-[5.5rem]'>
-        <img src={buttonM} className='w-[30rem] pr-[90px]' />
+        <div className=' hover:scale-110 ml-1'>
+          <img src={buttonM} className='w-[30rem] pr-[90px]' />
+          <p className='w-[34rem] pr-[140px] pt-[1.5rem] mt-[-9rem] text-center text-7xl text-[#90625D]' >PLAY</p>
+        </div>
         <div className='flex '>
-          <img src={button} className='w-[12.3rem]' />
-          <img src={button} className='w-[12.3rem]' />
+          <div className='hover:scale-110'>
+            <img src={button} className='w-[12.3rem] mt-[2.5rem]' />
+            <p className='ml-[2.6rem] text-4xl mt-[-5.5rem] text-[#461E19]'>EXIT</p>
+          </div>
+          <div className='hover:scale-110'>
+            <img src={button} className='w-[12.3rem] mt-[2.5rem]' />
+            <p className='ml-[3.5rem] text-4xl mt-[-5.5rem] text-[#461E19]'>HOW</p>
+          </div>
         </div>
       </div>
-      <div className='absolute z-10 top-[40rem] left-[5.5rem]'>
-        <div className='w-[34rem] pr-[140px] pt-[1.5rem]  text-center text-7xl text-[#90625D]' >PLAY</div>
-        <div className='flex mt-[5.3rem]'>
-          <div className='ml-[2.6rem] text-4xl text-[#461E19]'>EXIT</div>
-          <div className='ml-[5.6rem] text-4xl text-[#461E19]'>HOW</div>
+      <div className='absolute z-10 top-[20rem] right-[27.5rem]'>
+        <Flower/>
         </div>
-      </div>
-      {/* <div className='relative z-10'> */}
-          <div className='absolute z-10 top-[20rem] right-[27.5rem] '>
-            <Flower/>
-          </div>
-          <div className='absolute z-10 top-[43rem] right-[52.3rem] animate-bounce'>
-            <img src={chicken1} />
-          </div>
-          <div className='absolute z-10 top-[41rem] left-[34rem] animate-bounce'>
-            <img src={chicken2} />
-          </div>
+        <div className='absolute z-10 top-[43.5rem] right-[52.6rem] animate-bounce w-[5rem]'>
+          <img src={chicken1} />
         </div>
+        <div className='absolute z-10 top-[40rem] left-[34rem] animate-bounce w-[5rem]'>
+          <img src={chicken2} />
+        </div>
+    </div>
   
   )
 }
