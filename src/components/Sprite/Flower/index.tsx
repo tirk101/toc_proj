@@ -1,12 +1,12 @@
 import React from 'react'
 import { SpriteAnimator } from 'react-sprite-animator'
 
-import { sprite } from '../../../assets/test'
+import { sprite , playerDownIdle} from '../../../assets/test'
 
 const Flower = () => {
   return (
     <SpriteAnimator
-      sprite={sprite}
+      sprite={playerDownIdle}
       width={172}
       height={124}
       frameCount={16}

@@ -12,6 +12,9 @@ import {StraightTile,Corner,Deadend,Tway,Oneway ,Player,Finishline , Defaulttile
 import defaultBoard9x9 from '../../utils/defaultBoard';
 import defaultBoard6x6 from '../../utils/6x6Board';
 import { defaultBoard12x12 } from '../../utils/12x12Board';
+import { set } from 'mongoose';
+
+import stepSound from '../../assets/playground/step_sound.wav'
 
 const defaultStraight: StraightTile[] = [
   {
@@ -40,7 +43,7 @@ const defaultDeadend: Deadend[] = [
       id: 'd1',
       boardId: 'null',
       direction: "up",
-      path: ["none"],
+      path: [],
       tileType: 'deadend',
   }, 
 ]
@@ -60,7 +63,7 @@ const defaultOneway: Oneway[] = [
       id: 'o1',
       boardId: 'null',
       direction: "up",
-      path: ["up"],
+      path: ["down"],
       tileType: 'oneway',
   }, 
 
@@ -96,7 +99,8 @@ const defaultFinishline: Finishline[] = [
   {
     id: 'f1',
     boardId: 'null',
-    content: "up",
+    direction: "up",
+    path:["up","down","left","right"],
     tileType: 'finishline',
   }
 ]
@@ -115,16 +119,27 @@ const index = () => {
   const dataObject = {straight: straight, corner: corner,deadend: deadend, tway: tway, oneway: oneway,player: player , finishline: finishline, defaulttile: defaulttile}  
   const dataArray = [straight, corner, deadend, tway,  oneway]
   const [position, setPosition] = useState({x:0,y:0});
-  const [startingBoard, setStartingBoard] = useState(null)
+  let startingBoard = {};
   const data = [];
+  const stack = [{id:'z',pathTaken:[]},]; //stack for backtracking
+  const onewayStack = [];
   const tileTypeMap = {
     straight: { state: straight, setState: setStraight },
     corner: { state: corner, setState: setCorner },
     tway: { state: tway, setState: setTway },
+    deadend: { state: deadend, setState: setDeadend },
     oneway: { state: oneway, setState: setOneway },
     player: { state: player, setState: setPlayer },
+    finishline: { state: finishline, setState: setFinishline },
   };
-  const rotationDirection = {straight: {'up':['up','down'],'left':['left','right'],'down':['up','down'],'right':['left','right']},corner: {'up':['up','left'],'left':['left','down'],'down':['down','right'],'right':['right','up']},tway: {'up':['up','left','down'],'left':['left','down','right'],'down':['down','right','up'],'right':['right','up','left']},oneway: {'up':['up'],'left':['left'],'down':['down'],'right':['right']},player: {'up':['up'],'left':['left'],'down':['down'],'right':['right']}}
+  const rotationDirection = {
+    straight: {'up':['up','down'],'left':['left','right'],'down':['up','down'],'right':['left','right']},
+    corner: {'up':['up','left'],'left':['left','down'],'down':['down','right'],'right':['right','up']},
+    tway: {'up':['up','left','down'],'left':['left','down','right'],'down':['down','right','up'],'right':['right','up','left']},
+    oneway: {'up':['down'],'left':['right'],'down':['up'],'right':['left']},
+    player: {'up':['up'],'left':['left'],'down':['down'],'right':['right']},
+    finishline: {'up':['up','down','left','right'],'left':['up','down','left','right'],'down':['up','down','left','right'],'right':['up','down','left','right']}
+  }
 
   
 
@@ -133,6 +148,8 @@ const index = () => {
   const [focusTile,setFocusTile] = useState(false)
   const [selectedTile,setSelectedTile] = useState(null)
   const [resetting,setResetting] = useState(true)
+  const [lockDown, setLockDown] = useState(false)
+  const [isMove, setIsMove] = useState(false)
   const navigate = useNavigate()
 
 
@@ -197,17 +214,18 @@ const handleDragEnd = (event) => {
     
       const currentTileData = boardData.find((item) => item.id === over?.id);
       const previousTileData = boardData.find((item) => item.id === active.data.current.boardId);
-      if(currentTileData)
-      {
-        currentTileData.tileId = active.id;
-        currentTileData.tileType = active.data.current.type;
-      }
       if(previousTileData)
       {
         previousTileData.tileId = 'null';
         previousTileData.tileType = 'null';
       }
+      if(currentTileData)
+      {
+        currentTileData.tileId = active.id;
+        currentTileData.tileType = active.data.current.type;
+      }
       
+
     if(over)
     {
       if (over.data.current.tileId === 'null')
@@ -232,8 +250,6 @@ const handleDragEnd = (event) => {
           const [activeArray, setActiveArray] = typesMap[active.data.current.type];
           const activeIndex = activeArray.findIndex((item) => item.id === active.id);
           activeArray[activeIndex].boardId = over?.id || 'null';
-          console.log('test')
-          console.log(activeArray[activeIndex])
           handleIncreaseTile(active);
         }
         
@@ -246,7 +262,7 @@ const handleDragEnd = (event) => {
         const currentData = activeArray.find((item) => item.id === active.id);
         const newData = activeArray.filter((item) => item.id !== active.id);
 
-        if(currentData.boardId === 'null') return;
+        if(currentData.boardId === 'null') {; return;}
         if(active.data.current.type === 'player' || active.data.current.type === 'finishline'){
           if(active.data.current.type === 'player')
           {
@@ -264,8 +280,8 @@ const handleDragEnd = (event) => {
           setActiveArray([...newData]);
         }
         
+        
     }
-    
     setFocusTile(false);
   };
 
@@ -291,7 +307,6 @@ const handleIncreaseTile = (active) => {
 
 const handleDragStart = (event) => {
   const { active } = event;
-  console.log(active)
   setSelectedTile(active);
 }
 
@@ -330,21 +345,23 @@ const handleReset = () => {
   defaulttile[0].boardId = 'null';
   defaulttile[1].boardId = 'null';
   finishline[0].boardId = 'null';
+  startingBoard = {};
+  data.length = 0;
   setResetting(false);
  
 }
 
 const handleMove = async(input) =>
 {
+  setIsMove(true)
   const playerBoard = player[0].boardId;
   if(playerBoard === 'null') return;
   const ypos = Array.from(playerBoard)[0].charCodeAt(0) 
   const xpos = Array.from(playerBoard)[1].charCodeAt(0)
-  console.log(ypos,xpos)
   if(input === 'up')
   {
     setPosition({x:position.x,y:position.y-4.5})
-    player[0].content = 'up'
+    player[0].direction = 'up'
     setTimeout(() => {
       player[0].boardId = (String.fromCharCode(ypos-1)+String.fromCharCode(xpos))
       setPosition({x:0,y:0})
@@ -355,7 +372,7 @@ const handleMove = async(input) =>
   else if(input === 'down')
   {
     setPosition({x:position.x,y:position.y+4.5})
-    player[0].content = 'down'
+    player[0].direction = 'down'
     setTimeout(() => {
       player[0].boardId = (String.fromCharCode(ypos+1)+String.fromCharCode(xpos))
       setPosition({x:0,y:0})
@@ -364,7 +381,7 @@ const handleMove = async(input) =>
   else if(input === 'left')
   {
     setPosition({x:position.x-4.5,y:position.y})
-    player[0].content = 'left'
+    player[0].direction = 'left'
     setTimeout(() => {
       player[0].boardId = (String.fromCharCode(ypos)+String.fromCharCode(xpos-1))
       setPosition({x:0,y:0})
@@ -373,18 +390,18 @@ const handleMove = async(input) =>
   else if(input === 'right')
   {
     setPosition({x:position.x+4.5,y:position.y})
-    player[0].content = 'right'
+    player[0].direction = 'right'
     setTimeout(() => {
       player[0].boardId = (String.fromCharCode(ypos)+String.fromCharCode(xpos+1))
       setPosition({x:0,y:0})
     }, 250);
   }
+  playMoveSound();
 
 }
 
 const handleInput = async (textInput) => {
-  const input = textInput.split(',');
-  for (const item of input) {
+  for (const item of textInput) {
     await new Promise<void>((resolve) => {
       setTimeout(async () => {
         await handleMove(item);
@@ -408,7 +425,7 @@ const initializeStart = async() => {
       if(item.path.includes('down'))
       {
         data.push('up')
-        setStartingBoard(board)
+        startingBoard = board;
       }
       else
       {
@@ -422,7 +439,7 @@ const initializeStart = async() => {
     if(item.path.includes('up'))
     {
       data.push('down')
-      setStartingBoard(board)
+      startingBoard = board;
     }
     else
     {
@@ -437,7 +454,7 @@ const initializeStart = async() => {
     if(item.path.includes('right'))
     {
       data.push('left')
-      setStartingBoard(board)
+      startingBoard = board;
     }
     else
     {
@@ -451,7 +468,7 @@ const initializeStart = async() => {
     if(item.path.includes('left'))
     {
       data.push('right')
-      setStartingBoard(board)
+      startingBoard = board;
     }
     else
     {
@@ -461,84 +478,742 @@ const initializeStart = async() => {
 }
 
 const handleFinish = async () => {
+  setLockDown(true);
+  data.length = 0;
   await initializeStart();
-  handleInput(data.toString());
+  let count = 0;
+  async function calculateAndCheckPath() {
+    await calculatePath();
+    count++;
+    if(count >= 1000)
+    {
+      return false;
+    }
+    return (data[data.length - 1] !== 'finish' && data[data.length - 1] !== 'gameover') ;
+  }
+  while (await calculateAndCheckPath()) {}
+
+  await handleInput(data);
+  const text = {'finish':'YOU WIN','gameover':'YOU LOSE'}
+  alert(text[data[data.length - 1]])
+  handleReset();
+  navigate('/endgame')
+  setLockDown(false)
 }
 
 const calculatePath = async () => {
+  if(data[data.length-1] === 'gameover') {alert("Gameover Bruh"); return}
   const tileId = startingBoard.tileId;
   const tileType = startingBoard.tileType;
   const { state } = tileTypeMap[tileType];
+  const playerBoard = startingBoard.id;
+  const ypos = Array.from(playerBoard)[0].charCodeAt(0) 
+  const xpos = Array.from(playerBoard)[1].charCodeAt(0)
   const item = state.find((item) => item.id === tileId);
   const path = item.path;
+  const possibleWay = {'up':'down', 'down':'up', 'left':'right', 'right':'left'}
 
+
+  const checkGameOver = () => {
+    if(stack[stack.length -1].id === 'z')
+    {
+      data.push('gameover');
+    }
+    else{
+      goBack();
+    }
+  }
+
+  const goBack = () =>
+  {
+    console.log(stack)
+    if (data[data.length-1] === 'up') {
+      const board = boardData.find((item) => item.id === String.fromCharCode(ypos+1)+String.fromCharCode(xpos))
+      if(board?.tileId !== 'null')
+      {
+        const { state } = tileTypeMap[board.tileType];
+        const item = state.find((item) => item.id === board?.tileId);
+        if(item.path.includes('up'))
+        {
+          data.push('down')
+          startingBoard = board;
+        }
+        else
+        {
+          data.push('nopath');
+        }
+        }
+      else
+      {
+        data.push('nopath');
+      }
+      }
+      else if (data[data.length-1] === 'down') {
+        const board = boardData.find((item) => item.id === String.fromCharCode(ypos-1)+String.fromCharCode(xpos))
+        if(board?.tileId !== 'null')
+        {
+          const { state } = tileTypeMap[board.tileType];
+          const item = state.find((item) => item.id === board?.tileId);
+          if(item.path.includes('down'))
+          {
+            data.push('up')
+            startingBoard = board;
+          }
+          else
+          {
+            data.push('nopath');
+          }
+        }
+        else
+        {
+          data.push('nopath');
+        }
+      }
+      else if (data[data.length-1] === 'left') {
+        const board = boardData.find((item) => item.id === String.fromCharCode(ypos)+String.fromCharCode(xpos+1))
+        if(board?.tileId !== 'null')
+        {
+          const { state } = tileTypeMap[board.tileType];
+          const item = state.find((item) => item.id === board?.tileId);
+          if(item.path.includes('left'))
+          {
+            data.push('right')
+            startingBoard = board;
+          }
+          else
+          {
+            data.push('nopath');
+          }
+        }
+        else
+        {
+          data.push('nopath');
+        }
+      }
+      else if (data[data.length-1] === 'right') {
+        const board = boardData.find((item) => item.id === String.fromCharCode(ypos)+String.fromCharCode(xpos-1))
+        if(board?.tileId !== 'null')
+        {
+          const { state } = tileTypeMap[board.tileType];
+          const item = state.find((item) => item.id === board?.tileId);
+          if(item.path.includes('right'))
+          {
+            data.push('left')
+            startingBoard = board;
+          }
+          else
+          {
+            data.push('nopath');
+          }
+        }
+        else
+        {
+          data.push('nopath');
+        }
+      }
+  }
 
   if (item.tileType === 'straight') {
-    if (data[data.length-1] === 'up') {
-    }
-    else if (data[data.length-1] === 'down') {
-    }
-    else if (data[data.length-1] === 'left') {
-    }
-    else if (data[data.length-1] === 'right') {
-    }
-  }
-  else if(item.tileType === 'corner')
-  {
-    if (data[data.length-1] === 'up') {
-    }
-    else if (data[data.length-1] === 'down') {
-    }
-    else if (data[data.length-1] === 'left') {
-    }
-    else if (data[data.length-1] === 'right') {
-    }
-  }
-  else if(item.tileType === 'deadend')
-  {
-    if (data[data.length-1] === 'up') {
-    }
-    else if (data[data.length-1] === 'down') {
-    }
-    else if (data[data.length-1] === 'left') {
-    }
-    else if (data[data.length-1] === 'right') {
-    }
-  }
-  else if (item.tileType === 'tway') 
-  {
-    if (data[data.length-1] === 'up') {
-    }
-    else if (data[data.length-1] === 'down') {
-    }
-    else if (data[data.length-1] === 'left') {
-    }
-    else if (data[data.length-1] === 'right') {
-    }
-  }
-  else if (item.tileType === 'oneway')
-  {
-    if(data[data.length-1] === 'up')
-    {
-    }
-    else if(data[data.length-1] === 'down')
-    {
-    }
-    else if(data[data.length-1] === 'left')
-    {
-    }
-    else if(data[data.length-1] === 'right')
-    {
-    }
+      if (data[data.length-1] === 'up') {
+        const board = boardData.find((item) => item.id === String.fromCharCode(ypos-1)+String.fromCharCode(xpos))
+        console.log(board)
+        if(board?.tileId !== 'null')
+        {
+          const { state } = tileTypeMap[board.tileType];
+          const item = state.find((item) => item.id === board?.tileId);
+          if(item.path.includes('down'))
+          {
+            data.push('up')
+            startingBoard = board;
+          }
+          else
+          {
+            checkGameOver();
+          }
+        }
+        else
+        {
+          checkGameOver();
+        }
+      }
+      else if (data[data.length-1] === 'down') {
+        const board = boardData.find((item) => item.id === String.fromCharCode(ypos+1)+String.fromCharCode(xpos))
+        if(board?.tileId !== 'null')
+        {
+          const { state } = tileTypeMap[board.tileType];
+          const item = state.find((item) => item.id === board?.tileId);
+          if(item.path.includes('up'))
+          {
+            data.push('down')
+            startingBoard = board;
+          }
+          else
+          {
+            checkGameOver();
+          }
+        }
+        else
+        {
+          checkGameOver();
+        }
+      }
+      else if (data[data.length-1] === 'left') {
+        const board = boardData.find((item) => item.id === String.fromCharCode(ypos)+String.fromCharCode(xpos-1))
+        if(board?.tileId !== 'null')
+        {
+          const { state } = tileTypeMap[board.tileType];
+          const item = state.find((item) => item.id === board?.tileId);
+          if(item.path.includes('right'))
+          {
+            data.push('left')
+            startingBoard = board;
+          }
+          else
+          {
+            checkGameOver();
+          }
+        }
+        else
+        {
+          checkGameOver();
+        }
+      }
+      else if (data[data.length-1] === 'right') {
+        const board = boardData.find((item) => item.id === String.fromCharCode(ypos)+String.fromCharCode(xpos+1))
+        if(board?.tileId !== 'null')
+        {
+          const { state } = tileTypeMap[board.tileType];
+          const item = state.find((item) => item.id === board?.tileId);
+          if(item.path.includes('left'))
+          {
+            data.push('right')
+            startingBoard = board;
+          }
+          else
+          {
+            checkGameOver();
+          }
+        }
+        else
+        {
+          checkGameOver();
+        }
+      }
   }
 
+  else if(item.tileType === 'corner')
+  {
+    const tile = state.find((item) => item.id === tileId);
+    const path = tile.path;
+    const possiblePath = path.filter((item) => item !== possibleWay[data[data.length-1]]);
+      if(possiblePath[0] === 'right')
+    {
+        const board = boardData.find((item) => item.id === String.fromCharCode(ypos)+String.fromCharCode(xpos+1))
+        if(board === undefined || board.tileId === 'null') {checkGameOver(); return;};
+        const {state} = tileTypeMap[board.tileType];
+        const item = state.find((item) => item.id === board?.tileId);
+        if(item.path.includes('left'))
+        {
+          data.push('right')
+          startingBoard = board;
+        }
+        else
+        {
+          checkGameOver();
+        }
+      }
+      else if(possiblePath[0] === 'left')
+      {
+        const board = boardData.find((item) => item.id === String.fromCharCode(ypos)+String.fromCharCode(xpos-1))
+        if(board === undefined  || board.tileId === 'null') {checkGameOver(); return;};
+        const {state} = tileTypeMap[board.tileType];
+        const item = state.find((item) => item.id === board?.tileId);
+        if(item.path.includes('right'))
+        {
+          data.push('left')
+          startingBoard = board;
+        }
+        else
+        {
+          checkGameOver();
+        }
+      }
+      else if(possiblePath[0] === 'up')
+      {
+        console.log('asdadsasd')
+        const board = boardData.find((item) => item.id === String.fromCharCode(ypos-1)+String.fromCharCode(xpos))
+        if(board === undefined  || board.tileId === 'null') {checkGameOver(); return;};
+        const {state} = tileTypeMap[board.tileType];
+        const item = state.find((item) => item.id === board?.tileId);
+        if(item.path.includes('down'))
+        {
+          data.push('up')
+          startingBoard = board;
+        }
+        else
+        {
+          checkGameOver();
+        }
+      }
+      else if(possiblePath[0] === 'down')
+      {
+        const board = boardData.find((item) => item.id === String.fromCharCode(ypos+1)+String.fromCharCode(xpos))
+        if(board === undefined  || board.tileId === 'null') {checkGameOver(); return;};
+        const {state} = tileTypeMap[board.tileType];
+        const item = state.find((item) => item.id === board?.tileId);
+        if(item.path.includes('up'))
+        {
+          data.push('down')
+          startingBoard = board;
+        }
+        else
+        {
+          checkGameOver();
+        }
+      }
+  }
+
+  else if (item.tileType === 'oneway') 
+  {
+    const thereIsWay = stack.some(item=> item.id !== 'z' && item.pathTaken.length !== 3)
+    const oppsiteWay = {'up':'down', 'down':'up', 'left':'right', 'right':'left'}
+    if(!thereIsWay)
+    {
+      console.log('stack test test ----', stack)
+      onewayStack.pop();
+      stack.splice(2);
+      if (data[data.length-1] === 'up') {
+      const board = boardData.find((item) => item.id === String.fromCharCode(ypos-1)+String.fromCharCode(xpos))
+      if(board?.tileId !== 'null')
+      {
+        const { state } = tileTypeMap[board.tileType];
+        const item = state.find((item) => item.id === board?.tileId);
+        if(item.path.includes('down'))
+        {
+          data.push('up')
+          startingBoard = board;
+        }
+        else
+        {
+          data.push('gameover');
+        }
+        }
+      else
+      {
+        data.push('gameover');
+      }
+      }
+      else if (data[data.length-1] === 'down') {
+        const board = boardData.find((item) => item.id === String.fromCharCode(ypos+1)+String.fromCharCode(xpos))
+        if(board?.tileId !== 'null')
+        {
+          const { state } = tileTypeMap[board.tileType];
+          const item = state.find((item) => item.id === board?.tileId);
+          if(item.path.includes('up'))
+          {
+            data.push('down')
+            startingBoard = board;
+          }
+          else
+          {
+            data.push('gameover');
+          }
+        }
+        else
+        {
+          data.push('gameover');
+        }
+      }
+      else if (data[data.length-1] === 'left') {
+        const board = boardData.find((item) => item.id === String.fromCharCode(ypos)+String.fromCharCode(xpos-1))
+        if(board?.tileId !== 'null')
+        {
+          const { state } = tileTypeMap[board.tileType];
+          const item = state.find((item) => item.id === board?.tileId);
+          if(item.path.includes('right'))
+          {
+            data.push('left')
+            startingBoard = board;
+          }
+          else
+          {
+            data.push('gameover');
+          }
+        }
+        else
+        {
+          data.push('gameover');
+        }
+      }
+      else if (data[data.length-1] === 'right') {
+        const board = boardData.find((item) => item.id === String.fromCharCode(ypos)+String.fromCharCode(xpos+1))
+        if(board?.tileId !== 'null')
+        {
+          const { state } = tileTypeMap[board.tileType];
+          const item = state.find((item) => item.id === board?.tileId);
+          if(item.path.includes('left'))
+          {
+            data.push('right')
+            startingBoard = board;
+          }
+          else
+          {
+            data.push('gameover');
+          }
+        }
+        else
+        {
+          data.push('gameover');
+        }
+      }
+    }
+    else
+    {
+      console.log('burh')
+      onewayStack.push(item.tileId);
+      goBack();
+    }
+
+  }
+
+  else if (item.tileType === 'tway')
+  {
+    const tile = state.find((item) => item.id === tileId);
+    const path = tile.path;
+    const oppositeWay = {'up':'down', 'down':'up', 'left':'right', 'right':'left'}
+    if(!stack.some(item=> item.id === tileId))
+    {
+      stack.push({id:tileId, pathTaken: [oppositeWay[data[data.length-1]]]});
+    }
+    else
+    {
+      const stackItem = stack.find(item => item.id === tileId);
+      console.log(stackItem)
+      const possiblePath = path.filter((item) => !stackItem.pathTaken.includes(item));
+
+      if(possiblePath.length === 0)
+      {
+          const thereIsWay = stack.some(item=> item.id !== 'z' && item.pathTaken.length !== 3)
+          const thereIsOneway = onewayStack.length !== 0;
+
+          console.log(thereIsWay)
+          if(thereIsWay)
+          {
+            const onlypath = stackItem.pathTaken[0];
+            if(onlypath === 'right')
+    {
+        const board = boardData.find((item) => item.id === String.fromCharCode(ypos)+String.fromCharCode(xpos+1))
+        if(board === undefined || board.tileId === 'null') {data.push('nopath'); return;};
+        const {state} = tileTypeMap[board.tileType];
+        const item = state.find((item) => item.id === board?.tileId);
+        if(item.path.includes('left'))
+        {
+          data.push('right')
+          startingBoard = board;
+        }
+        else
+        {
+          data.push('nopath');
+        }
+            }
+            else if(onlypath === 'left')
+            {
+              const board = boardData.find((item) => item.id === String.fromCharCode(ypos)+String.fromCharCode(xpos-1))
+              if(board === undefined  || board.tileId === 'null') {data.push('nopath'); return;};
+              const {state} = tileTypeMap[board.tileType];
+              const item = state.find((item) => item.id === board?.tileId);
+              if(item.path.includes('right'))
+              {
+                data.push('left')
+                startingBoard = board;
+              }
+              else
+              {
+                data.push('nopath');
+              }
+            }
+            else if(onlypath === 'up')
+            {
+              const board = boardData.find((item) => item.id === String.fromCharCode(ypos-1)+String.fromCharCode(xpos))
+              if(board === undefined  || board.tileId === 'null') {data.push('nopath'); return;};
+              const {state} = tileTypeMap[board.tileType];
+              const item = state.find((item) => item.id === board?.tileId);
+              if(item.path.includes('down'))
+              {
+                data.push('up')
+                startingBoard = board;
+              }
+              else
+              {
+                data.push('nopath');
+              }
+            }
+            else if(onlypath === 'down')
+            {
+              const board = boardData.find((item) => item.id === String.fromCharCode(ypos+1)+String.fromCharCode(xpos))
+              if(board === undefined  || board.tileId === 'null') {data.push('nopath'); return;};
+              const {state} = tileTypeMap[board.tileType];
+              const item = state.find((item) => item.id === board?.tileId);
+              if(item.path.includes('up'))
+              {
+                data.push('down')
+                startingBoard = board;
+              }
+              else
+              {
+                data.push('nopath');
+              }
+            }
+          }
+          else if(thereIsOneway)
+          {
+            let onlypath;
+            if(stack[1] === stackItem)
+            {
+              onlypath = stackItem.pathTaken[1];
+              
+            }
+            else
+            {
+              onlypath = stackItem.pathTaken[0];
+            }
+            
+            if(onlypath === 'right')
+    {
+        const board = boardData.find((item) => item.id === String.fromCharCode(ypos)+String.fromCharCode(xpos+1))
+        if(board === undefined || board.tileId === 'null') {data.push('nopath'); return;};
+        const {state} = tileTypeMap[board.tileType];
+        const item = state.find((item) => item.id === board?.tileId);
+        if(item.path.includes('left'))
+        {
+          data.push('right')
+          startingBoard = board;
+        }
+        else
+        {
+          data.push('nopath');
+        }
+            }
+            else if(onlypath === 'left')
+            {
+              const board = boardData.find((item) => item.id === String.fromCharCode(ypos)+String.fromCharCode(xpos-1))
+              if(board === undefined  || board.tileId === 'null') {data.push('nopath'); return;};
+              const {state} = tileTypeMap[board.tileType];
+              const item = state.find((item) => item.id === board?.tileId);
+              if(item.path.includes('right'))
+              {
+                data.push('left')
+                startingBoard = board;
+              }
+              else
+              {
+                data.push('nopath');
+              }
+            }
+            else if(onlypath === 'up')
+            {
+              const board = boardData.find((item) => item.id === String.fromCharCode(ypos-1)+String.fromCharCode(xpos))
+              if(board === undefined  || board.tileId === 'null') {data.push('nopath'); return;};
+              const {state} = tileTypeMap[board.tileType];
+              const item = state.find((item) => item.id === board?.tileId);
+              if(item.path.includes('down'))
+              {
+                data.push('up')
+                startingBoard = board;
+              }
+              else
+              {
+                data.push('nopath');
+              }
+            }
+            else if(onlypath === 'down')
+            {
+              const board = boardData.find((item) => item.id === String.fromCharCode(ypos+1)+String.fromCharCode(xpos))
+              if(board === undefined  || board.tileId === 'null') {data.push('nopath'); return;};
+              const {state} = tileTypeMap[board.tileType];
+              const item = state.find((item) => item.id === board?.tileId);
+              if(item.path.includes('up'))
+              {
+                data.push('down')
+                startingBoard = board;
+              }
+              else
+              {
+                data.push('nopath');
+              }
+            }
+            
+          }
+          else 
+          {
+            data.push('gameover');
+          }
+          return;
+      }
+      if(possiblePath[0] === 'right')
+   {
+      const board = boardData.find((item) => item.id === String.fromCharCode(ypos)+String.fromCharCode(xpos+1))
+      if(board === undefined || board.tileId === 'null') {stackItem.pathTaken.push(possiblePath[0]); return;};
+      const {state} = tileTypeMap[board.tileType];
+      const item = state.find((item) => item.id === board?.tileId);
+      if(item.path.includes('left'))
+      {
+        data.push('right')
+        startingBoard = board;
+      }
+      }
+      else if(possiblePath[0] === 'left')
+      {
+        const board = boardData.find((item) => item.id === String.fromCharCode(ypos)+String.fromCharCode(xpos-1))
+        if(board === undefined  || board.tileId === 'null') {stackItem.pathTaken.push(possiblePath[0]); return;};
+        const {state} = tileTypeMap[board.tileType];
+        const item = state.find((item) => item.id === board?.tileId);
+        if(item.path.includes('right'))
+        {
+          data.push('left')
+          startingBoard = board;
+        }
+      }
+      else if(possiblePath[0] === 'up')
+      {
+        const board = boardData.find((item) => item.id === String.fromCharCode(ypos-1)+String.fromCharCode(xpos))
+        if(board === undefined  || board.tileId === 'null') {stackItem.pathTaken.push(possiblePath[0]); return;};
+        const {state} = tileTypeMap[board.tileType];
+        const item = state.find((item) => item.id === board?.tileId);
+        if(item.path.includes('down'))
+        {
+          data.push('up')
+          startingBoard = board;
+        }
+      }
+      else if(possiblePath[0] === 'down')
+      {
+        const board = boardData.find((item) => item.id === String.fromCharCode(ypos+1)+String.fromCharCode(xpos))
+        if(board === undefined  || board.tileId === 'null') {stackItem.pathTaken.push(possiblePath[0]); return;};
+        const {state} = tileTypeMap[board.tileType];
+        const item = state.find((item) => item.id === board?.tileId);
+        if(item.path.includes('up'))
+        {
+          data.push('down')
+          startingBoard = board;
+        }
+      }
+      stackItem.pathTaken.push(possiblePath[0]);
+    }
+
+  }
+
+
+
+
+  else if(item.tileType === 'deadend')
+  {
+    const oppsiteWay = {'up':'down', 'down':'up', 'left':'right', 'right':'left'}
+    if(stack[stack.length -1].id === 'z') 
+    {
+      data.push('gameover');
+    }
+    else
+    {
+      if (data[data.length-1] === 'up') {
+        const board = boardData.find((item) => item.id === String.fromCharCode(ypos+1)+String.fromCharCode(xpos))
+        if(board?.tileId !== 'null')
+        {
+          const { state } = tileTypeMap[board.tileType];
+          const item = state.find((item) => item.id === board?.tileId);
+          if(item.path.includes('up'))
+          {
+            data.push('down')
+            startingBoard = board;
+          }
+          else
+          {
+            data.push('nopath');
+          }
+          }
+        else
+        {
+          data.push('nopath');
+        }
+        }
+        else if (data[data.length-1] === 'down') {
+          const board = boardData.find((item) => item.id === String.fromCharCode(ypos-1)+String.fromCharCode(xpos))
+          if(board?.tileId !== 'null')
+          {
+            const { state } = tileTypeMap[board.tileType];
+            const item = state.find((item) => item.id === board?.tileId);
+            if(item.path.includes('down'))
+            {
+              data.push('up')
+              startingBoard = board;
+            }
+            else
+            {
+              data.push('nopath');
+            }
+          }
+          else
+          {
+            data.push('nopath');
+          }
+        }
+        else if (data[data.length-1] === 'left') {
+          const board = boardData.find((item) => item.id === String.fromCharCode(ypos)+String.fromCharCode(xpos+1))
+          if(board?.tileId !== 'null')
+          {
+            const { state } = tileTypeMap[board.tileType];
+            const item = state.find((item) => item.id === board?.tileId);
+            if(item.path.includes('left'))
+            {
+              data.push('right')
+              startingBoard = board;
+            }
+            else
+            {
+              data.push('nopath');
+            }
+          }
+          else
+          {
+            data.push('nopath');
+          }
+        }
+        else if (data[data.length-1] === 'right') {
+          const board = boardData.find((item) => item.id === String.fromCharCode(ypos)+String.fromCharCode(xpos-1))
+          if(board?.tileId !== 'null')
+          {
+            const { state } = tileTypeMap[board.tileType];
+            const item = state.find((item) => item.id === board?.tileId);
+            if(item.path.includes('right'))
+            {
+              data.push('left')
+              startingBoard = board;
+            }
+            else
+            {
+              data.push('nopath');
+            }
+          }
+          else
+          {
+            data.push('nopath');
+          }
+        }
+    }
+  }
+  else if(item.tileType === 'finishline')
+  {
+    data.push('finish');
+  }
+  console.log(data)
+  console.log(stack)
 }
 
 
-
-
-
-
+const playMoveSound = () => {
+  const audio = new Audio(stepSound);
+  audio.play();
+}
 
   if(resetting)
   {
@@ -549,21 +1224,24 @@ const calculatePath = async () => {
 
   return (
     <DndContext onDragEnd={handleDragEnd} onDragStart={handleDragStart}  >
+      <div className='relative'>
       <div style={{ backgroundImage: `url(${background})` }} className='w-full h-[100vh] flex justify-center items-center gap-[5rem] overflow-hidden animate-moving-background' >
           <Tileholder dataObject={dataObject} setFocusTile={setFocusTile} />
-          <Board dataObject={dataArray} boardData={boardData} setFocusTile={setFocusTile} player={player} finishline={finishline} defaultTile={defaultTile} position={position}/>
+          <Board dataObject={dataArray} boardData={boardData} setFocusTile={setFocusTile} player={player} finishline={finishline} defaultTile={defaultTile} position={position} isMove={isMove}/>
           <Sizechanger/>
           <div className=' absolute flex bottom-1 w-[30rem] justify-center items-center '>
-            <img src={tutorialButton} className='w-[8rem] pointer-events-auto hover:translate-y-[-3px] duration-100 active:opacity-70 active:hover:translate-y-[3px]  [clip-path:circle(40%_at_50%_50%)]' draggable={false} onClick={()=>{navigate('/tutorial')}}/>
+            <img src={tutorialButton} className='w-[8rem] pointer-events-auto hover:translate-y-[-3px] duration-100 active:opacity-70 active:hover:translate-y-[3px]  [clip-path:circle(40%_at_50%_50%)]' draggable={false} onClick={calculatePath}/>
             <img src={startButton} className='w-[12rem] pointer-events-auto hover:translate-y-[-3px] duration-100   active:opacity-70 active:hover:translate-y-[3px] [clip-path:circle(38%_at_50%_50%)]' draggable={false} onClick={handleFinish}/>
-            <img src={restartButton} className='w-[8rem] pointer-events-auto hover:translate-y-[-3px] duration-100 active:opacity-70 active:hover:translate-y-[3px] [clip-path:circle(40%_at_50%_50%)]' draggable={false} onClick={handleReset} />
+            <img src={restartButton} className='w-[8rem] pointer-events-auto hover:translate-y-[-3px] duration-100 active:opacity-70 active:hover:translate-y-[3px] [clip-path:circle(40%_at_50%_50%)]' draggable={false} onClick={playMoveSound} />
           </div>
           <h1 className={`absolute top-10 text-[4rem] duration-200 transform transition-opacity ${focusTile ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-0'}`}>
             Press Q or E to rotate
           </h1>
+          {lockDown && <div className='bg-transparent absolute w-full h-full z-[1000]'></div>}
+          </div>
       </div>  
       
-      </DndContext>
+    </DndContext>
 
   )
 }
