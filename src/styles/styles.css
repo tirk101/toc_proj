@@ -7,9 +7,6 @@
     src: url("../assets/font/joystix.otf");
 }
 
-.title {
-    -webkit-text-stroke: 4px white;
-}
 
 @layer base {
     .font-outline-2 {
