@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Route, Routes, BrowserRouter, Link} from 'reac
 
 import Home from './page/Home/index'
 import Tutorial from './page/Tutorial/index'
+import Tutorial2 from './page/Tutorial2/index'
 import Playground from './page/Playground/index'
 import EndGame from './page/EndGame/index'
 
@@ -32,6 +33,7 @@ const route = () => {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/tutorial" element={<Tutorial />} />
+        <Route path="/tutorial2" element={<Tutorial2 />} />
         <Route path="/playground" element={<Playground />} />
         <Route path="/endgame" element={<EndGame />} />
       </Routes>
