@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { BrowserRouter as Router, Route, Routes, BrowserRouter, Link} from 'react-router-dom'
 
 import Home from './page/Home/index'
@@ -6,7 +6,19 @@ import Tutorial from './page/Tutorial/index'
 import Playground from './page/Playground/index'
 import EndGame from './page/EndGame/index'
 
+import BackgroundMusic from './assets/playground/background_music.mp3'
+
 const route = () => {
+
+  const audio = new Audio(BackgroundMusic)
+
+  useEffect(() => {
+    audio.loop = true
+    audio.play()
+    audio.volume = 0.25
+  })
+
+
   return (
     <BrowserRouter>
       <div className='absolute z-50'>

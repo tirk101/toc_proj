@@ -67,6 +67,7 @@ tileType: string;
 export type Finishline = {
 id: string;
 boardId: string;
-content: string;
+direction: string;
+path:string[];
 tileType: string;
 };
