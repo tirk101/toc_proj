@@ -23,27 +23,17 @@ const Index = () => {
           style={{ backgroundImage: `url(${background})` }}
           className="w-full h-[100vh] flex justify-center items-center gap-[5rem] overflow-hidden animate-moving-background absolute"
         ></div>
-        <div className="absolute bottom-0">
-          <img src={label} alt="label" className="" />
+        <div className="absolute bottom-0 ">
+          <img src={label} alt="label" />
         </div>
-        <div className="absolute flex justify-between w-full px-5 py-5 bottom-0">
+        <div className="absolute flex  w-full px-5 py-5 bottom-0">
           <div>
             <img
               src={leftArrow}
               className="pointer-events-auto hover:translate-y-[-3px] duration-100 active:opacity-70 active:hover:translate-y-[3px]"
               draggable={false}
               onClick={() => {
-                navigate("/");
-              }}
-            />
-          </div>
-          <div>
-            <img
-              src={rightArrow}
-              className="pointer-events-auto hover:translate-y-[-3px] duration-100 active:opacity-70 active:hover:translate-y-[3px]"
-              draggable={false}
-              onClick={() => {
-                navigate("/tutorial2");
+                navigate("/tutorial");
               }}
             />
           </div>
