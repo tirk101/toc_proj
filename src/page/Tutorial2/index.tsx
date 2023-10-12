@@ -6,6 +6,7 @@ import {
   label,
   leftArrow,
   rightArrow,
+  cat
 } from "../../assets/tutorial";
 import { useNavigate } from "react-router-dom";
 const Index = () => {
@@ -38,8 +39,11 @@ const Index = () => {
             />
           </div>
         </div>
-        <div className="absolute top-10 left-5 z-0">
+        <div className="absolute top-10 left-8 z-0">
           <img src={HOW} alt="how" className="w-[90vh]" />
+          <div className="absolute animate-bounce left-2/4 top-1/3">
+            <img src={cat} alt="cat" className="w-[70%]" />
+          </div>
         </div>
 
         {/* <div className="flex flex-col justify-center items-center font-bold z-40">
