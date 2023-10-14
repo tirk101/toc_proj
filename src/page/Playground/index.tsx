@@ -478,6 +478,13 @@ const initializeStart = async() => {
 }
 
 const handleFinish = async () => {
+  if(player[0].boardId === 'null') {
+    alert("player is not place yet"); return;
+  }
+  else if(finishline[0].boardId === 'null') {
+    alert("finishline is not place yet"); return;
+  }
+  try{
   setLockDown(true);
   data.length = 0;
   await initializeStart();
@@ -499,6 +506,13 @@ const handleFinish = async () => {
   handleReset();
   navigate('/endgame')
   setLockDown(false)
+  }
+  catch(err)
+  {
+    alert("Something went wrong please try again later")
+    navigate('/endgame')
+    console.log(err)
+  }
 }
 
 const calculatePath = async () => {
