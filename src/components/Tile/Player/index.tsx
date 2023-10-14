@@ -2,13 +2,11 @@ import React , {useEffect} from 'react';
 import {useDraggable} from '@dnd-kit/core';
 
 import { SpriteAnimator } from 'react-sprite-animator'
-import { playerFront , playerBack,playerLeft,playerRight   } from '../../../assets/playground';
-import {playerDownMove,playerLeftMove,playerUpMove,playerRightMove , playerDownIdle,playerLeftIdle,playerRightIdle,playerUpIdle} from '../../../assets/test'
+
 
 const Playertile =(props) =>{
-  const imgData = [{id:'down',src:playerFront},{id:'up',src:playerBack},{id:'left',src:playerLeft},{id:'right',src:playerRight}]
-  const spirteData = [{id:'down',src:playerDownMove},{id:'up',src:playerUpMove},{id:'left',src:playerLeftMove},{id:'right',src:playerRightMove}]
-  const spriteIdle = [{id:'down',src:playerDownIdle},{id:'up',src:playerUpIdle},{id:'left',src:playerLeftIdle},{id:'right',src:playerRightIdle}]
+  const spirteData = [{id:'down',src:props.playerImage.down},{id:'up',src:props.playerImage.up},{id:'left',src:props.playerImage.left},{id:'right',src:props.playerImage.right}]
+  const spriteIdle = [{id:'down',src:props.playerIdle.down},{id:'up',src:props.playerIdle.up},{id:'left',src:props.playerIdle.left},{id:'right',src:props.playerIdle.right}]
   const {attributes, listeners, setNodeRef, transform , isDragging} = useDraggable({
     id: props.id,
     data:

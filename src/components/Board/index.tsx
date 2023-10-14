@@ -5,9 +5,12 @@ import {board,tileHolder} from '../../assets/home';
 import Tile from '../Tile/Path/index';
 import Playertile from '../Tile/Player';
 import Finishline from '../Tile/Finishline';
+import {playerDownMove,playerLeftMove,playerUpMove,playerRightMove , playerDownIdle,playerLeftIdle,playerRightIdle,playerUpIdle} from '../../assets/test'
 
 export const Board =({dataObject,boardData,setFocusTile,player, finishline, defaultTile ,position,isMove}) =>{
 
+  const playerImage = {down:playerDownMove,up:playerUpMove,left:playerLeftMove,right:playerRightMove}
+  const playerIdle = {down:playerDownIdle,up:playerUpIdle,left:playerLeftIdle,right:playerRightIdle}
   return (
     <div className=' relative'>
       <div className='absolute  w-full h-full '>
@@ -25,7 +28,7 @@ export const Board =({dataObject,boardData,setFocusTile,player, finishline, defa
                       ))))}
                       {defaultTile.map((item) => ((item.boardId === boardItem.id)? <Tile id={item.id} key={item.id} content={item.content} type={item.tileType}  boardId={item.boardId} setFocusTile={setFocusTile}/> : null))}
                       <div className='absolute top-0'>
-                        {player.map((item) => ((item.boardId === boardItem.id)? <Playertile id={item.id} key={item.id} direction={item.direction} type={"player"}  boardId={item.boardId} setFocusTile={setFocusTile} position={position} isMove={isMove}/> : null))}
+                        {player.map((item) => ((item.boardId === boardItem.id)? <Playertile id={item.id} key={item.id} direction={item.direction} type={"player"}  boardId={item.boardId} setFocusTile={setFocusTile} position={position} isMove={isMove} playerImage={playerImage} playerIdle={playerIdle}/> : null))}
                         {finishline.map((item) => ((item.boardId === boardItem.id)? <Finishline id={item.id} key={item.id} direction={item.direction} path={item.path} type={"finishline"}  boardId={item.boardId} setFocusTile={setFocusTile}/> : null))}
                       </div>
                       </div>
@@ -37,7 +40,7 @@ export const Board =({dataObject,boardData,setFocusTile,player, finishline, defa
             <div className='flex justify-between mx-32 mb-10'> 
               <div className='relative'>
                 <div className='absolute left-[0.7rem]'>
-                  {player.map((item) => ((item.boardId === 'null')?<Playertile id={item.id} key={item.id} direction={item.direction} type={"player"}  boardId={item.boardId} setFocusTile={setFocusTile} position={position} isMove={isMove} />: null ))}
+                  {player.map((item) => ((item.boardId === 'null')?<Playertile id={item.id} key={item.id} direction={item.direction} type={"player"}  boardId={item.boardId} setFocusTile={setFocusTile} position={position} isMove={isMove}  playerImage={playerImage} playerIdle={playerIdle}/>: null ))}
                 </div>
                 <img src={tileHolder} className='w-[6rem] draggable={false} '/>
               </div>
