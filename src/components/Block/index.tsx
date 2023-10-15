@@ -25,15 +25,22 @@ const Droppable = (props) => {
   }
 
   const style = {
-    backgroundColor: !isOver? (
-      (('acegik'.includes(props.id[0]) && ['1', '3', '5', '7', '9', 'b'].includes(props.id.slice(1))) || ('bdfhjl'.includes(props.id[0]) &&(['2', '4', '6', '8', 'a', 'c'].includes(props.id.slice(1))))) ? 
-        'rgb(0, 0, 0, 0.2)' : 'rgb(0, 0, 0, 0.25)'
-      ): props.tileId === 'null' ? 'rgb(0, 255, 0, 0.1)' : 'rgb(255, 0, 0, 0.5)',
+    backgroundColor: !isOver
+      ? (('acegik'.includes(props.id[0]) && ['1', '3', '5', '7', '9', 'b'].includes(props.id.slice(1))) ||
+          ('bdfhjl'.includes(props.id[0]) && ['2', '4', '6', '8', 'a', 'c'].includes(props.id.slice(1)))
+        ? 'rgba(0, 0, 0, 0.2)'
+        : 'rgba(0, 0, 0, 0.25)'
+      )
+      : props.tileId === 'null'
+      ? 'rgba(0, 255, 0, 0.1)'
+      : 'rgba(255, 0, 0, 0.5)',
+    width: `${handleSize(props.boardSize)}rem`,
+    height: `${handleSize(props.boardSize)}rem`,
   };
 
 
   return (
-    <div ref={setNodeRef} style={style} className={`md:w-[${handleSize(props.boardSize)}rem]  md:h-[${handleSize(props.boardSize)}rem]`}>
+    <div ref={setNodeRef} style={style}>
       {props.children} 
     </div>
   );
