@@ -2,8 +2,7 @@ import React , {useEffect, useState} from 'react';
 import {useDraggable} from '@dnd-kit/core';
 
 import { SpriteAnimator } from 'react-sprite-animator'
-import { playerFront , playerBack,playerLeft,playerRight   } from '../../../assets/playground';
-import {playerDownMove,playerLeftMove,playerUpMove,playerRightMove , playerDownIdle,playerLeftIdle,playerRightIdle,playerUpIdle} from '../../../assets/test'
+
 
 const Playertile =(props) =>{
   const imgData = [{id:'down',src:playerFront},{id:'up',src:playerBack},{id:'left',src:playerLeft},{id:'right',src:playerRight}]
@@ -43,7 +42,7 @@ const Playertile =(props) =>{
     else if (boardSize === 12) left = -1;
     return left;
   }
-  
+
   return (
 
     <button ref={setNodeRef} style={style} {...listeners} {...attributes} className={`w-[4.5rem] h-[4.5rem] z-[20] object-contain relative ${!isDragging ? 'transition-transform transform translate-y-[-10px]' : ''}`}>

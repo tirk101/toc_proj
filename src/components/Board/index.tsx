@@ -4,9 +4,12 @@ import {board,tileHolder} from '../../assets/home';
 import Tile from '../Tile/Path/index';
 import Playertile from '../Tile/Player';
 import Finishline from '../Tile/Finishline';
+import {playerDownMove,playerLeftMove,playerUpMove,playerRightMove , playerDownIdle,playerLeftIdle,playerRightIdle,playerUpIdle} from '../../assets/test'
 
 export const Board =({dataObject,boardSize,boardData,setFocusTile,player, finishline, defaultTile ,position,isMove}) =>{
 
+  const playerImage = {down:playerDownMove,up:playerUpMove,left:playerLeftMove,right:playerRightMove}
+  const playerIdle = {down:playerDownIdle,up:playerUpIdle,left:playerLeftIdle,right:playerRightIdle}
   return (
     <div className=' relative'>
       
