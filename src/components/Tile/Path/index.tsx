@@ -36,7 +36,7 @@ const Tile =(props) =>{
   const element = direction.find((item)=>item.id === props.direction)?.rotate
 
   return (
-    <button ref={setNodeRef} style={style} {...listeners} {...attributes} className={`md:w-[${handleSize(props.boardSize)}rem]  md:h-[${handleSize(props.boardSize)}rem] z-[50]`}>
+    <button ref={setNodeRef} style={style} {...listeners} {...attributes} className={`w-[${handleSize(props.boardSize)}rem] h-[${handleSize(props.boardSize)}rem] z-[50]`}>
       <img src={imgData.find((item)=>item.id === props.type)?.src} alt={props.type} className={`w-full h-full ${element}`}/>
     </button>
     

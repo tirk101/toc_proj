@@ -2,10 +2,9 @@ import React , {useEffect, useState} from 'react';
 import {useDraggable} from '@dnd-kit/core';
 
 import { SpriteAnimator } from 'react-sprite-animator'
-
+import {playerDownMove, playerUpMove, playerLeftMove, playerRightMove, playerDownIdle, playerUpIdle, playerLeftIdle, playerRightIdle } from '../../../assets/test'
 
 const Playertile =(props) =>{
-  const imgData = [{id:'down',src:playerFront},{id:'up',src:playerBack},{id:'left',src:playerLeft},{id:'right',src:playerRight}]
   const spirteData = [{id:'down',src:playerDownMove},{id:'up',src:playerUpMove},{id:'left',src:playerLeftMove},{id:'right',src:playerRightMove}]
   const spriteIdle = [{id:'down',src:playerDownIdle},{id:'up',src:playerUpIdle},{id:'left',src:playerLeftIdle},{id:'right',src:playerRightIdle}]
   
