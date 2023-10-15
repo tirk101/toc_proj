@@ -7,6 +7,7 @@ import {
   leftArrow,
   rightArrow,
   cat,
+  ground,
 } from "../../assets/tutorial";
 import { useNavigate } from "react-router-dom";
 const Index = () => {
@@ -24,8 +25,11 @@ const Index = () => {
           style={{ backgroundImage: `url(${background})` }}
           className="w-full h-[100vh] flex justify-center items-center gap-[5rem] overflow-hidden animate-moving-background absolute"
         ></div>
-        <div className="absolute bottom-0">
+        <div className="absolute bottom-0 w-[50%] h-screen">
           <img src={label} alt="label" className="" />
+        </div>
+        <div className="absolute bottom-0 w-full">
+          <img src={ground} alt="ground" className="" />
         </div>
         <div className="absolute flex justify-between w-full px-5 py-5 bottom-0">
           <div>
