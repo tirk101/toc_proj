@@ -19,7 +19,7 @@ const Index = () => {
 
   return (
     <div>
-      <div className="max-h-[1280px] max-w-[1920px] min-h-[700px] min-w-[1000px] flex justify-center">
+      <div className="flex justify-center">
         <div
           style={{ backgroundImage: `url(${background})` }}
           className="w-full h-[100vh] flex justify-center items-center gap-[5rem] overflow-hidden animate-moving-background absolute"
