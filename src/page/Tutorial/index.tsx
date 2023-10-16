@@ -8,6 +8,11 @@ import {
   rightArrow,
   cat,
   ground,
+  branch,
+  left,
+  right,
+  straight,
+  force
 } from "../../assets/tutorial";
 import { useNavigate } from "react-router-dom";
 const Index = () => {
@@ -25,18 +30,65 @@ const Index = () => {
           style={{ backgroundImage: `url(${background})` }}
           className="w-full h-[100vh] flex justify-center items-center gap-[5rem] overflow-hidden animate-moving-background absolute"
         ></div>
-        <div className="absolute right-5 text-[#ffffff] text-4xl">1/2</div>
-        <div className="absolute top-0 mb-1/2">
-          <img src={label} alt="label" className="h-full" />
+        <div className="absolute top-2 right-12 text-[#ffffff] text-4xl">
+          1/2
+        </div>
+        <div className="absolute top-0 w-[80vh]">
+          <img src={label} alt="label" className="w-full" />
+        </div>
+        <div className="absolute flex flex-col w-[80vh] text-white font-pixelus text-[4.5vh] leading-[4vh]">
+          <div className="pt-[11vh] pl-[2vh]">
+            #1 กำำหนดเส้นทางที่ต้องการโดยแต่ละเส้นทางมีคุณสมบัติดังนี้
+          </div>
+          <div className="pt-[4vh] flex pl-[5vh]">
+            <div className="pr-[2vh]">
+              <img src={branch} alt="branch" className="w-[8vh]" />
+            </div>
+            <div className="flex items-center">
+              ::: ทางสามแยก เลือกไปได้ 3 เส้นทาง
+            </div>
+          </div>
+          <div className="pt-[0.75vh] flex pl-[5vh]">
+            <div className="pr-[2vh]">
+              <img src={left} alt="left" className="w-[8vh]" />
+            </div>
+            <div className="flex items-center">
+            ::: เลี้ยวซ้ายหักศอก
+            </div>
+          </div>
+          <div className="pt-[0.5vh] flex pl-[5vh]">
+            <div className="pr-[2vh]">
+              <img src={right} alt="right" className="w-[8vh]" />
+            </div>
+            <div className="flex items-center">
+            ::: เลี้ยวขวาหักศอก
+            </div>
+          </div>
+          <div className="pt-[0.5vh] flex pl-[5vh]">
+            <div className="pr-[2vh]">
+              <img src={straight} alt="straight" className="w-[8vh]" />
+            </div>
+            <div className="flex items-center">
+            ::: ทางตรง
+            </div>
+          </div>
+          <div className="flex pl-[5vh]">
+            <div className="pr-[2vh]">
+              <img src={force} alt="force" className="w-[8vh]" />
+            </div>
+            <div className="flex items-center">
+            ::: ทางตรงที่บังคับไปแล้วห้ามกลับ
+            </div>
+          </div>
         </div>
         <div className="absolute bottom-0 w-full">
           <img src={ground} alt="ground" className="w-full" />
         </div>
         <div>
           <div className="absolute top-2 left-2">
-            <img src={HOW} alt="how" className="w-[50rem]" />
+            <img src={HOW} alt="how" className="w-[73vh]" />
           </div>
-          <div className="absolute top-[3rem] left-[20rem] animate-bounce">
+          <div className="absolute top-[6vh] left-[30vh] animate-bounce w-[15vh]">
             <img src={cat} alt="cat" />
           </div>
         </div>
