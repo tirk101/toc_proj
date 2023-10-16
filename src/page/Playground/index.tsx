@@ -319,7 +319,11 @@ const handleReset = () => {
   setOneway(defaultOneway);
   setPlayer(defaultPlayer);
   setFinishline(defaultFinishline);
-  setBoardData(defaultBoard9x9);
+
+  if(boardSize === 9) setBoardData(defaultBoard9x9);
+  if(boardSize === 6) setBoardData(defaultBoard6x6);
+  if(boardSize === 12) setBoardData(defaultBoard12x12);
+
   setDefaulttile(defaultTile);
   dataObject.straight = defaultStraight;
   dataObject.corner = defaultCorner;
@@ -1262,7 +1266,7 @@ const playMoveSound = () => {
           <div className=' absolute flex bottom-1 w-[30rem] justify-center items-center '>
             <img src={tutorialButton} className='w-[8rem] pointer-events-auto hover:translate-y-[-3px] duration-100 active:opacity-70 active:hover:translate-y-[3px]  [clip-path:circle(40%_at_50%_50%)]' draggable={false} onClick={calculatePath}/>
             <img src={startButton} className='w-[12rem] pointer-events-auto hover:translate-y-[-3px] duration-100   active:opacity-70 active:hover:translate-y-[3px] [clip-path:circle(38%_at_50%_50%)]' draggable={false} onClick={handleFinish}/>
-            <img src={restartButton} className='w-[8rem] pointer-events-auto hover:translate-y-[-3px] duration-100 active:opacity-70 active:hover:translate-y-[3px] [clip-path:circle(40%_at_50%_50%)]' draggable={false} onClick={playMoveSound} />
+            <img src={restartButton} className='w-[8rem] pointer-events-auto hover:translate-y-[-3px] duration-100 active:opacity-70 active:hover:translate-y-[3px] [clip-path:circle(40%_at_50%_50%)]' draggable={false} onClick={handleReset} />
           </div>
           <h1 className={`absolute top-10 text-[4rem] duration-200 transform transition-opacity ${focusTile ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-0'}`}>
             Press Q or E to rotate
