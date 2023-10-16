@@ -25,8 +25,8 @@ const Index = () => {
           style={{ backgroundImage: `url(${background})` }}
           className="w-full h-[100vh] flex justify-center items-center gap-[5rem] overflow-hidden animate-moving-background absolute"
         ></div>
-        <div className="absolute bottom-[8vw] w-[50%]">
-          <img src={label} alt="label" className="w-full" />
+        <div className="absolute bottom-[8vw]">
+          <img src={label} alt="label" className="h-screen" />
         </div>
         <div className="absolute bottom-0 w-full">
           <img src={ground} alt="ground" className="w-full" />
@@ -55,9 +55,9 @@ const Index = () => {
         </div>
         <div className="absolute top-10 left-8 z-0">
           <img src={HOW} alt="how" className="w-[45vw]" />
-          <div className="absolute animate-bounce left-2/4 top-1/3">
+          {/* <div className="absolute animate-bounce left-2/4 top-1/3">
             <img src={cat} alt="cat" className="w-[70%]" />
-          </div>
+          </div> */}
         </div>
 
         {/* <div className="flex flex-col justify-center items-center font-bold z-40">

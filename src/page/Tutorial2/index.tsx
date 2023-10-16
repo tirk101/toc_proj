@@ -6,7 +6,8 @@ import {
   label,
   leftArrow,
   rightArrow,
-  cat
+  cat,
+  ground
 } from "../../assets/tutorial";
 import { useNavigate } from "react-router-dom";
 const Index = () => {
@@ -26,6 +27,9 @@ const Index = () => {
         ></div>
         <div className="absolute bottom-0 ">
           <img src={label} alt="label" />
+        </div>
+        <div className="absolute bottom-0 w-full">
+          <img src={ground} alt="ground" className="w-full" />
         </div>
         <div className="absolute flex  w-full px-5 py-5 bottom-0">
           <div>
