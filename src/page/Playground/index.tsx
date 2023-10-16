@@ -264,7 +264,7 @@ const handleDragEnd = (event) => {
         const newData = activeArray.filter((item) => item.id !== active.id);
 
         if(currentData.boardId === 'null') {; return;}
-        if(active.data.current.type === 'player' || active.data.current.type === 'finishline'){
+        if(active.data.current.type === 'player' || active.data.current.type === 'finishline' || active.data.current.type === 'oneway'){
           if(active.data.current.type === 'player')
           {
             defaulttile[0].boardId = 'null';
@@ -288,7 +288,7 @@ const handleDragEnd = (event) => {
 
 
 const handleIncreaseTile = (active) => {
-  if (active.data.current.type === 'player' || active.data.current.tpye === 'finishline') return;
+  if (active.data.current.type === 'player' || active.data.current.type === 'finishline' || active.data.current.type === 'oneway')  return;
   if (active.data.current.boardId !== 'null') return;
   const pathArray ={straight: ["up","down"],corner: ["up","left"],deadend: ["none"],tway: ["up","left","down"],oneway: ["up"],player: ["up"],finishline: ["up"],defaulttile: ["up"]}
   const { type } = active.data.current;
@@ -510,7 +510,7 @@ const handleFinish = async () => {
   }
   catch(err)
   {
-    alert("Something went wrong please try again later")
+    alert("you place something illegal on the board \n -Player direction is not correctly \n -There is no tile in front of character")
     navigate('/endgame')
     console.log(err)
   }

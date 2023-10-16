@@ -27,7 +27,9 @@ export const Board =({dataObject,boardSize,boardData,setFocusTile,player, finish
                       ))))}
                       {defaultTile.map((item) => ((item.boardId === boardItem.id)? <Tile id={item.id} key={item.id} boardSize={boardSize} content={item.content} type={item.tileType}  boardId={item.boardId} setFocusTile={setFocusTile}/> : null))}
                       <div className='absolute top-0'>
+                        <div className='absolute'>
                         {player.map((item) => ((item.boardId === boardItem.id)? <Playertile id={item.id} key={item.id} boardSize={boardSize} direction={item.direction} type={"player"}  boardId={item.boardId} setFocusTile={setFocusTile} position={position} isMove={isMove}/> : null))}
+                        </div>
                         {finishline.map((item) => ((item.boardId === boardItem.id)? <Finishline id={item.id} key={item.id} direction={item.direction} path={item.path} type={"finishline"}  boardId={item.boardId} setFocusTile={setFocusTile}/> : null))}
                       </div>
                       </div>
