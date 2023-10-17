@@ -1,6 +1,6 @@
 import React from 'react';
 import Droppable from '../Block/index';
-import {board,tileHolder} from '../../assets/home';
+import {new_board,tileHolder} from '../../assets/home';
 import Tile from '../Tile/Path/index';
 import Playertile from '../Tile/Player';
 import Finishline from '../Tile/Finishline';
@@ -54,7 +54,7 @@ export const Board =({dataObject,boardSize,boardData,setFocusTile,player, finish
             </div>
           </div>
       </div>
-      <img src={board} className='w-[65rem] pointer-events-auto' draggable={false}/>
+      <img src={new_board} className='w-[65rem] pointer-events-auto' draggable={false}/>
       </div>
 );
 };
