@@ -44,7 +44,7 @@ function Home() {
         <div className="text-[17.2vh] text-[#A4C263] font-outline-4 tracking-tight">
           ROBOT
         </div>
-        <div className="text-[7.4vh] text-[#A4C263] font-outline-4 leading-[11.85vh] tracking-widest">
+        <div className="text-[7.4vh] text-[#A4C263] font-outline-3 leading-[11.85vh] tracking-widest">
           SIMULATION
         </div>
         <div className="text-[3.33vh] text-[#6A8139] font-outline-2  leading-[2.96vh] ">
