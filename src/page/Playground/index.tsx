@@ -1,6 +1,7 @@
 import React, { useState , useEffect } from 'react'
 import { useNavigate} from 'react-router-dom'
 import {background,restartButton,tutorialButton,startButton, board} from '../../assets/home'
+import { leftArrow } from '../../assets/tutorial';
 
 import {DndContext} from '@dnd-kit/core';
 
@@ -12,7 +13,6 @@ import {StraightTile,Corner,Deadend,Tway,Oneway ,Player,Finishline , Defaulttile
 import defaultBoard9x9 from '../../utils/defaultBoard';
 import defaultBoard6x6 from '../../utils/6x6Board';
 import defaultBoard12x12 from '../../utils/12x12Board';
-import { set } from 'mongoose';
 
 import stepSound from '../../assets/playground/step_sound.wav'
 
@@ -1292,6 +1292,7 @@ const playMoveSound = () => {
           </h1>
           {lockDown && <div className='bg-transparent absolute w-full h-full z-[1000]'></div>}
           </div>
+          <img src={leftArrow}  className='absolute z-[10] left-3 bottom-2 pointer-events-auto hover:translate-y-[-3px] active:opacity-70 active:hover:translate-y-[3px] [clip-path:circle(60%_at_50%_50%)]' onClick={()=>{navigate('/')}}/>
       </div>  
       
     </DndContext>
