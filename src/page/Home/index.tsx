@@ -15,7 +15,7 @@ function Home() {
   const [count, setCount] = useState(0);
   const navigate = useNavigate();
   return (
-    <div className="flex w-screen h-screen items-center">
+    <div className="flex w-screen h-screen items-center select-none">
       {/* BG Screen */}
       <div
         style={{ backgroundImage: `url(${background})` }}
@@ -29,17 +29,17 @@ function Home() {
             <Flower />
           </div>
           <div className="z-20 animate-bounce w-[7vh] mr-[53vw] mt-[8vh]">
-            <img src={chicken2} />
+            <img src={chicken2} draggable={false} />
           </div>
           <div className="z-10 animate-bounce w-[7vh] mr-[31vw] mt-[10vh]">
-            <img src={chicken1} />
+            <img src={chicken1} draggable={false} />
           </div>
         </div>
-        <img src={island} className="w-screen  pr-[10vh]" />
+        <img src={island} draggable={false} className="w-screen  pr-[10vh]" />
       </div>
 
       {/* Logo */}
-      <div className="absolute flex flex-col z-10 top-[5vh] left-[6vh] leading-[14vh] drop-shadow-2xl select-none">
+      <div className="absolute flex flex-col z-10 top-[5vh] left-[6vh] leading-[14vh] drop-shadow-2xl">
         <div className="text-4xl text-[#6A8139] font-outline-2 ">WHEEL</div>
         <div className="text-[17.2vh] text-[#A4C263] font-outline-4 tracking-tight">
           ROBOT
@@ -53,25 +53,25 @@ function Home() {
       </div>
 
       {/* Buttons */}
-      <div className="flex flex-col absolute z-0 bottom-[4vh] left-[4vh] select-none">
+      <div className="flex flex-col absolute z-50 bottom-[4vh] left-[4vh]">
         <div
           className="flex justify-center items-center hover:scale-110 ml-1 cursor-pointer"
           onClick={() => {
             navigate("playground");
           }}
         >
-          <img src={buttonM} className="w-[36vh]" />
+          <img src={buttonM} className="w-[36vh]" draggable={false} />
           <p className="absolute text-[6.67vh] text-[#90625D] pb-[2vh]">PLAY</p>
         </div>
         <div className="flex w-full">
           <div className="flex justify-center items-center hover:scale-110 cursor-pointer">
-            <img src={button} className="w-[18vh]" />
+            <img src={button} className="w-[18vh]" draggable={false} />
             <p className="absolute text-[3.35vh] text-[#461E19] pb-[1.5vh]">
               EXIT
             </p>
           </div>
           <div className="flex justify-center items-center hover:scale-110 cursor-pointer">
-            <img src={button} className="w-[18vh]" />
+            <img src={button} className="w-[18vh]" draggable={false} />
             <p
               className="absolute text-[3.35vh] text-[#461E19] pb-[1.5vh]"
               onClick={() => {
