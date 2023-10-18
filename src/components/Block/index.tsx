@@ -18,9 +18,9 @@ const Droppable = (props) => {
 
   const handleSize = (boardSize) => {
     let size; 
-    if (boardSize === 9) size = 3.75;
-    else if (boardSize === 6) size = 5.625;
-    else if (boardSize === 12) size = 2.8125;
+    if (boardSize === 9) size = 4.5;
+    else if (boardSize === 6) size = 6.75;
+    else if (boardSize === 12) size = 3.375;
     return size;
   }
 

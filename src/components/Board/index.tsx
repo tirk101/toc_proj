@@ -46,7 +46,7 @@ export const Board =({dataObject,boardSize,boardData,setFocusTile,player, finish
                 <img src={tileHolder} className='w-[6rem] draggable={false} '/>
               </div>
               <div className='relative'>
-                <div className='absolute left-[0.7rem]'>
+                <div className='absolute'>
                   {finishline[0].boardId == 'null' ? <Finishline id={'f1'} key={'f1'} direction={'up'} path={['up','right','down','left']} type={"finishline"}  boardId={finishline[0].boardId} setFocusTile={setFocusTile}/> : null}
                 </div>
                 <img src={tileHolder} className='w-[6rem] draggable={false} '/>
